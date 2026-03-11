@@ -1,0 +1,2 @@
+// $ROOT_PATH/sim/tb/SQUID_ENCODER_TOP_TB.sv
+$ROOT_PATH/sim/tb/RS8b_ENCODER_TB.sv

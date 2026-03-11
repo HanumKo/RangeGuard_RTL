@@ -1,0 +1,1035 @@
+module ERROR_INFORMATION(input [15:0] Syndrome_in,
+                      output [3:0] Error_location_out,
+                      output [7:0] Error_value_out,
+                      output [1:0] Decode_result_out
+                      );
+  // Syndome_in : 16bit syndrome input
+  // Error_location_out : error (symbol) location output (0~9, DUE/NE: 1111)
+  // Error_value_out : error value output (0000_0000 ~ 1111_1111)
+  // Decode_result_out : NE(00), CE(01), DUE(10)
+
+  /*
+    G-Matrix
+
+    1 0 0 0 0 0 0 0 1 1
+    0 1 0 0 0 0 0 0 1 a^1
+    0 0 1 0 0 0 0 0 1 a^2
+    0 0 0 1 0 0 0 0 1 a^3
+    0 0 0 0 1 0 0 0 1 a^4
+    0 0 0 0 0 1 0 0 1 a^5
+    0 0 0 0 0 0 1 0 1 a^6
+    0 0 0 0 0 0 0 1 1 a^7
+
+    H-Matrix
+
+    1 1   1   1   1   1   1   1   1 0 
+    1 a^1 a^2 a^3 a^4 a^5 a^6 a^7 0 1 
+
+  */
+
+  reg [1:0] Decode_result;
+  //wire [7:0] Error_location_gdiv;
+  reg [7:0] Error_location_gfexp;
+  reg [3:0] Error_location_reg;
+  reg [7:0] Error_value;
+  wire [7:0] Syndrome0,Syndrome1;
+
+  //GFDIV gdiv(Syndrome_in[7:0], Syndrome_in[15:8], Error_location_gdiv);
+  //GFEXP gfexp(Error_location_gdiv, Error_location_gfexp);
+
+    GFEXP gfexp_00(Syndrome_in[7:0],Syndrome0);
+    GFEXP gfexp_01(Syndrome_in[15:8],Syndrome1);
+    ERROR_LOCATION error_location(Syndrome1 , Syndrome0, Error_location_gfexp);
+    //GFDIV error_value00(Syndrome_in[7:0],Syndrome_in[15:8], Error_location_gfdiv); // a^(50+?, 78+?, ...)/a^(25+?, 39+?, ...) => a^(25, 39, ...)  
+    //GFDIV error_value01(Syndrome_in[15:8], Error_location_gfdiv, Error_value); // a^(25+?)/a^(a^25) => a^? (error value)
+    
+   always_comb begin    
+     if(Syndrome_in[7:0]==8'b0000_0000 && Syndrome_in[15:8]!=8'b0000_0000)begin // 8th chip errors
+        Error_location_reg = 4'b1000;
+        Error_value=Syndrome_in[15:8];
+        Decode_result=2'b01; //CE
+     end
+     if(Syndrome_in[7:0]!=8'b0000_0000 && Syndrome_in[15:8]==8'b0000_0000)begin // 9th chip errors
+        Error_location_reg = 4'b1001;
+        Error_value=Syndrome_in[7:0];
+        Decode_result=2'b01; //CE
+     end
+     if(Syndrome_in[7:0]!=8'b0000_0000 && Syndrome_in[15:8]!=8'b0000_0000 && Error_location_gfexp<=8'd7) begin // 0~7th chip errors
+        //$display("error location div : %b",Error_location_gdiv);
+         //$display("error information error location : %d",Error_location_gfexp);
+         //$display("CE!");
+         Error_location_reg = Error_location_gfexp[3:0]; // 0000 ~ 0111
+         Error_value=Syndrome_in[15:8];
+         Decode_result=2'b01; // CE
+     end
+     if(Syndrome_in[7:0]!=8'b0000_0000 && Syndrome_in[15:8]!=8'b0000_0000 && Error_location_gfexp>8'd7) begin // 0~7th chip errors
+        //$display("error location div : %b",Error_location_gdiv);
+         //$display("error information error location : %d",Error_location_gfexp);
+         //$display("DUE");
+         Error_location_reg = 4'b0000;
+         Error_value=8'b0000_0000;
+         Decode_result=2'b10; // DUE
+     end
+     if(Syndrome_in[15:0]==16'b0000_0000_0000_0000) begin
+        Error_location_reg = 4'b0000;
+        Error_value=8'b0000_0000;
+        Decode_result=2'b00; // NE
+     end
+   end
+  
+  assign Error_location_out =  Error_location_reg;
+  assign Error_value_out = Error_value;
+  // NE : Syndrome_in is all zero
+  // CE: Error location is 0~9
+  // otherwise : DUE
+  assign Decode_result_out = Decode_result;
+
+endmodule
+module ERROR_LOCATION(input [7:0] Syndrome0,
+                      input [7:0] Syndrome1,
+                      output [7:0] Error_location_out);
+  // Syndome0 : 8bit Syndrome 0 input
+  // Syndrome1 : 8bit syndrome 1 input
+  // Error location out : Syndrome1/Syndrome0 absolute value => 0~7 (CE cases)
+
+   assign Error_location_out = (Syndrome1 >= Syndrome0) ? 
+                              (Syndrome1 - Syndrome0) : 
+                              (8'd255 + Syndrome1 - Syndrome0);
+
+endmodule
+
+
+module GFDIV(a, b, c);
+  input [7:0] a;
+  input [7:0] b;
+  output [7:0] c;
+
+  /*
+    GF(2^8)
+    primitive polynomial : x^8 + x6 + x^4 + x^3 + x^2 + x + 1
+    a = a^n
+    b = a^m
+    c = a/b = a^(n-m)
+  */
+  
+  reg [7:0] binv;
+  wire [7:0] imm;
+  always_comb
+      case (b)
+        8'b0000_0000:  binv = 8'b0000_0000; // b=a^-inf => b=0 => a/0 = 0
+        8'b0000_0001:  binv = 8'b0000_0001; // b=a^0 => a/(a^0) => a x (a^0)
+        8'b0000_0010:  binv = 8'b1010_1111; // b=a^1 => a/(a^1) => a x (a^254)~~~~~
+        8'b0000_0100:  binv = 8'b1111_1000; // b=a^2 
+        8'b0000_1000:  binv = 8'b0111_1100; // b=a^3
+        8'b0001_0000:  binv = 8'b0011_1110; // b=a^4 
+        8'b0010_0000:  binv = 8'b0001_1111; // b=a^5 
+        8'b0100_0000:  binv = 8'b1010_0000; // b=a^6 
+        8'b1000_0000:  binv = 8'b0101_0000;//  b=a^7
+        8'b0101_1111:  binv = 8'b0010_1000;//  b=a^8
+        8'b1011_1110:  binv = 8'b0001_0100; // b=a^9
+        8'b0010_0011:  binv = 8'b0000_1010; // b=a^10
+        8'b0100_0110:  binv = 8'b0000_0101; // b=a^11
+        8'b1000_1100:  binv = 8'b1010_1101; // b=a^12
+        8'b0100_0111:  binv = 8'b1111_1001; // b=a^13
+        8'b1000_1110:  binv = 8'b1101_0011; // b=a^14
+        8'b0100_0011:  binv = 8'b1100_0110; // b=a^15
+        8'b1000_0110:  binv = 8'b0110_0011; // b=a^16
+        8'b0101_0011:  binv = 8'b1001_1110; // b=a^17
+        8'b1010_0110:  binv = 8'b0100_1111; // b=a^18
+        8'b0001_0011:  binv = 8'b1000_1000; // b=a^19
+        8'b0010_0110:  binv = 8'b0100_0100; // b=a^20
+        8'b0100_1100:  binv = 8'b0010_0010; // b=a^21
+        8'b1001_1000:  binv = 8'b0001_0001; // b=a^22
+        8'b0110_1111:  binv = 8'b1010_0111; // b=a^23
+        8'b1101_1110:  binv = 8'b1111_1100; // b=a^24
+        8'b1110_0011:  binv = 8'b0111_1110; // b=a^25
+        8'b1001_1001:  binv = 8'b0011_1111; // b=a^26
+        8'b0110_1101:  binv = 8'b1011_0000; // b=a^27
+        8'b1101_1010:  binv = 8'b0101_1000; // b=a^28
+        8'b1110_1011:  binv = 8'b0010_1100; // b=a^29
+        8'b1000_1001:  binv = 8'b0001_0110; // b=a^30
+        8'b0100_1101:  binv = 8'b0000_1011; // b=a^31
+        8'b1001_1010:  binv = 8'b1010_1010; // b=a^32
+        8'b0110_1011:  binv = 8'b0101_0101; // b=a^33
+        8'b1101_0110:  binv = 8'b1000_0101; // b=a^34
+        8'b1111_0011:  binv = 8'b1110_1101; // b=a^35
+        8'b1011_1001:  binv = 8'b1101_1001; // b=a^36
+        8'b0010_1101:  binv = 8'b1100_0011; // b=a^37
+        8'b0101_1010:  binv = 8'b1100_1110; // b=a^38
+        8'b1011_0100:  binv = 8'b0110_0111; // b=a^39
+        8'b0011_0111:  binv = 8'b1001_1100; // b=a^40
+        8'b0110_1110:  binv = 8'b0100_1110; // b=a^41
+        8'b1101_1100:  binv = 8'b0010_0111; // b=a^42
+        8'b1110_0111:  binv = 8'b1011_1100; // b=a^43
+        8'b1001_0001:  binv = 8'b0101_1110; // b=a^44
+        8'b0111_1101:  binv = 8'b0010_1111; // b=a^45
+        8'b1111_1010:  binv = 8'b1011_1000; // b=a^46
+        8'b1010_1011:  binv = 8'b0101_1100; // b=a^47
+        8'b0000_1001:  binv = 8'b0010_1110; // b=a^48
+        8'b0001_0010:  binv = 8'b0001_0111; // b=a^49
+        8'b0010_0100:  binv = 8'b1010_0100; // b=a^50
+        8'b0100_1000:  binv = 8'b0101_0010; // b=a^51
+        8'b1001_0000:  binv = 8'b0010_1001; // b=a^52
+        8'b0111_1111:  binv = 8'b1011_1011; // b=a^53
+        8'b1111_1110:  binv = 8'b1111_0010; // b=a^54
+        8'b1010_0011:  binv = 8'b0111_1001; // b=a^55
+        8'b0001_1001:  binv = 8'b1001_0011; // b=a^56
+        8'b0011_0010:  binv = 8'b1110_0110; // b=a^57
+        8'b0110_0100:  binv = 8'b0111_0011; // b=a^58
+        8'b1100_1000:  binv = 8'b1001_0110; // b=a^59
+        8'b1100_1111:  binv = 8'b0100_1011; // b=a^60
+        8'b1100_0001:  binv = 8'b1000_1010; // b=a^61
+        8'b1101_1101:  binv = 8'b0100_0101; // b=a^62
+        8'b1110_0101:  binv = 8'b1000_1101; // b=a^63
+        8'b1001_0101:  binv = 8'b1110_1001; // b=a^64
+        8'b0111_0101:  binv = 8'b1101_1011; // b=a^65
+        8'b1110_1010:  binv = 8'b1100_0010; // b=a^66
+        8'b1000_1011:  binv = 8'b0110_0001; // b=a^67
+        8'b0100_1001:  binv = 8'b1001_1111; // b=a^68
+        8'b1001_0010:  binv = 8'b1110_0000; // b=a^69
+        8'b0111_1011:  binv = 8'b0111_0000; // b=a^70
+        8'b1111_0110:  binv = 8'b0011_1000; // b=a^71
+        8'b1011_0011:  binv = 8'b0001_1100; // b=a^72
+        8'b0011_1001:  binv = 8'b0000_1110; // b=a^73
+        8'b0111_0010:  binv = 8'b0000_0111; // b=a^74
+        8'b1110_0100:  binv = 8'b1010_1100; // b=a^75
+        8'b1001_0111:  binv = 8'b0101_0110; // b=a^76
+        8'b0111_0001:  binv = 8'b0010_1011; // b=a^77
+        8'b1110_0010:  binv = 8'b1011_1010; // b=a^78
+        8'b1001_1011:  binv = 8'b0101_1101; // b=a^79
+        8'b0110_1001:  binv = 8'b1000_0001; // b=a^80
+        8'b1101_0010:  binv = 8'b1110_1111; // b=a^81
+        8'b1111_1011:  binv = 8'b1101_1000; // b=a^82
+        8'b1010_1001:  binv = 8'b0110_1100; // b=a^83
+        8'b0000_1101:  binv = 8'b0011_0110; // b=a^84
+        8'b0001_1010:  binv = 8'b0001_1011; // b=a^85
+        8'b0011_0100:  binv = 8'b1010_0010; // b=a^86
+        8'b0110_1000:  binv = 8'b0101_0001; // b=a^87
+        8'b1101_0000:  binv = 8'b1000_0111; // b=a^88
+        8'b1111_1111:  binv = 8'b1110_1100; // b=a^89
+        8'b1010_0001:  binv = 8'b0111_0110; // b=a^90
+        8'b0001_1101:  binv = 8'b0011_1011; // b=a^91
+        8'b0011_1010:  binv = 8'b1011_0010; // b=a^92
+        8'b0111_0100:  binv = 8'b0101_1001; // b=a^93
+        8'b1110_1000:  binv = 8'b1000_0011; // b=a^94
+        8'b1000_1111:  binv = 8'b1110_1110; // b=a^95
+        8'b0100_0001:  binv = 8'b0111_0111; // b=a^96
+        8'b1000_0010:  binv = 8'b1001_0100; // b=a^97
+        8'b0101_1011:  binv = 8'b0100_1010; // b=a^98
+        8'b1011_0110:  binv = 8'b0010_0101; // b=a^99
+        8'b0011_0011:  binv = 8'b1011_1101; // b=a^100
+        8'b0110_0110:  binv = 8'b1111_0001; // b=a^101
+        8'b1100_1100:  binv = 8'b1101_0111; // b=a^102
+        8'b1100_0111:  binv = 8'b1100_0100; // b=a^103
+        8'b1101_0001:  binv = 8'b0110_0010; // b=a^104
+        8'b1111_1101:  binv = 8'b0011_0001; // b=a^105
+        8'b1010_0101:  binv = 8'b1011_0111; // b=a^106
+        8'b0001_0101:  binv = 8'b1111_0100; // b=a^107
+        8'b0010_1010:  binv = 8'b0111_1010; // b=a^108
+        8'b0101_0100:  binv = 8'b0011_1101; // b=a^109
+        8'b1010_1000:  binv = 8'b1011_0001; // b=a^110
+        8'b0000_1111:  binv = 8'b1111_0111; // b=a^111
+        8'b0001_1110:  binv = 8'b1101_0100; // b=a^112
+        8'b0011_1100:  binv = 8'b0110_1010; // b=a^113
+        8'b0111_1000:  binv = 8'b0011_0101; // b=a^114
+        8'b1111_0000:  binv = 8'b1011_0101; // b=a^115
+        8'b1011_1111:  binv = 8'b1111_0101; // b=a^116
+        8'b0010_0001:  binv = 8'b1101_0101; // b=a^117
+        8'b0100_0010:  binv = 8'b1100_0101; // b=a^118
+        8'b1000_0100:  binv = 8'b1100_1101; // b=a^119
+        8'b0101_0111:  binv = 8'b1100_1001; // b=a^120
+        8'b1010_1110:  binv = 8'b1100_1011; // b=a^121
+        8'b0000_0011:  binv = 8'b1100_1010; // b=a^122
+        8'b0000_0110:  binv = 8'b0110_0101; // b=a^123
+        8'b0000_1100:  binv = 8'b1001_1101; // b=a^124
+        8'b0001_1000:  binv = 8'b1110_0001; // b=a^125
+        8'b0011_0000:  binv = 8'b1101_1111; // b=a^126
+        8'b0110_0000:  binv = 8'b1100_0000; // b=a^127
+        8'b1100_0000:  binv = 8'b0110_0000; // b=a^128
+        8'b1101_1111:  binv = 8'b0011_0000; // b=a^129
+        8'b1110_0001:  binv = 8'b0001_1000; // b=a^130
+        8'b1001_1101:  binv = 8'b0000_1100; // b=a^131
+        8'b0110_0101:  binv = 8'b0000_0110; // b=a^132
+        8'b1100_1010:  binv = 8'b0000_0011; // b=a^133
+        8'b1100_1011:  binv = 8'b1010_1110; // b=a^134
+        8'b1100_1001:  binv = 8'b0101_0111; // b=a^135
+        8'b1100_1101:  binv = 8'b1000_0100; // b=a^136
+        8'b1100_0101:  binv = 8'b0100_0010; // b=a^137
+        8'b1101_0101:  binv = 8'b0010_0001; // b=a^138
+        8'b1111_0101:  binv = 8'b1011_1111; // b=a^139
+        8'b1011_0101:  binv = 8'b1111_0000; // b=a^140
+        8'b0011_0101:  binv = 8'b0111_1000; // b=a^141
+        8'b0110_1010:  binv = 8'b0011_1100; // b=a^142
+        8'b1101_0100:  binv = 8'b0001_1110; // b=a^143
+        8'b1111_0111:  binv = 8'b0000_1111; // b=a^144
+        8'b1011_0001:  binv = 8'b1010_1000; // b=a^145
+        8'b0011_1101:  binv = 8'b0101_0100; // b=a^146
+        8'b0111_1010:  binv = 8'b0010_1010; // b=a^147
+        8'b1111_0100:  binv = 8'b0001_0101; // b=a^148
+        8'b1011_0111:  binv = 8'b1010_0101; // b=a^149
+        8'b0011_0001:  binv = 8'b1111_1101; // b=a^150
+        8'b0110_0010:  binv = 8'b1101_0001; // b=a^151
+        8'b1100_0100:  binv = 8'b1100_0111; // b=a^152
+        8'b1101_0111:  binv = 8'b1100_1100; // b=a^153
+        8'b1111_0001:  binv = 8'b0110_0110; // b=a^154
+        8'b1011_1101:  binv = 8'b0011_0011; // b=a^155
+        8'b0010_0101:  binv = 8'b1011_0110; // b=a^156
+        8'b0100_1010:  binv = 8'b0101_1011; // b=a^157
+        8'b1001_0100:  binv = 8'b1000_0010; // b=a^158
+        8'b0111_0111:  binv = 8'b0100_0001; // b=a^159
+        8'b1110_1110:  binv = 8'b1000_1111; // b=a^160
+        8'b1000_0011:  binv = 8'b1110_1000; // b=a^161
+        8'b0101_1001:  binv = 8'b0111_0100; // b=a^162
+        8'b1011_0010:  binv = 8'b0011_1010; // b=a^163
+        8'b0011_1011:  binv = 8'b0001_1101; // b=a^164
+        8'b0111_0110:  binv = 8'b1010_0001; // b=a^165
+        8'b1110_1100:  binv = 8'b1111_1111; // b=a^166 
+        8'b1000_0111:  binv = 8'b1101_0000; // b=a^167
+        8'b0101_0001:  binv = 8'b0110_1000; // b=a^168
+        8'b1010_0010:  binv = 8'b0011_0100; // b=a^169
+        8'b0001_1011:  binv = 8'b0001_1010; // b=a^170
+        8'b0011_0110:  binv = 8'b0000_1101; // b=a^171
+        8'b0110_1100:  binv = 8'b1010_1001; // b=a^172
+        8'b1101_1000:  binv = 8'b1111_1011; // b=a^173
+        8'b1110_1111:  binv = 8'b1101_0010; // b=a^174
+        8'b1000_0001:  binv = 8'b0110_1001; // b=a^175
+        8'b0101_1101:  binv = 8'b1001_1011; // b=a^176
+        8'b1011_1010:  binv = 8'b1110_0010; // b=a^177
+        8'b0010_1011:  binv = 8'b0111_0001; // b=a^178
+        8'b0101_0110:  binv = 8'b1001_0111; // b=a^179
+        8'b1010_1100:  binv = 8'b1110_0100; // b=a^180
+        8'b0000_0111:  binv = 8'b0111_0010; // b=a^181
+        8'b0000_1110:  binv = 8'b0011_1001; // b=a^182
+        8'b0001_1100:  binv = 8'b1011_0011; // b=a^183
+        8'b0011_1000:  binv = 8'b1111_0110; // b=a^184
+        8'b0111_0000:  binv = 8'b0111_1011; // b=a^185
+        8'b1110_0000:  binv = 8'b1001_0010; // b=a^186
+        8'b1001_1111:  binv = 8'b0100_1001; // b=a^187
+        8'b0110_0001:  binv = 8'b1000_1011; // b=a^188
+        8'b1100_0010:  binv = 8'b1110_1010; // b=a^189
+        8'b1101_1011:  binv = 8'b0111_0101; // b=a^190
+        8'b1110_1001:  binv = 8'b1001_0101; // b=a^191
+        8'b1000_1101:  binv = 8'b1110_0101; // b=a^192
+        8'b0100_0101:  binv = 8'b1101_1101; // b=a^193
+        8'b1000_1010:  binv = 8'b1100_0001; // b=a^194
+        8'b0100_1011:  binv = 8'b1100_1111; // b=a^195
+        8'b1001_0110:  binv = 8'b1100_1000; // b=a^196
+        8'b0111_0011:  binv = 8'b0110_0100; // b=a^197
+        8'b1110_0110:  binv = 8'b0011_0010; // b=a^198
+        8'b1001_0011:  binv = 8'b0001_1001; // b=a^199
+        8'b0111_1001:  binv = 8'b1010_0011; // b=a^200
+        8'b1111_0010:  binv = 8'b1111_1110; // b=a^201
+        8'b1011_1011:  binv = 8'b0111_1111; // b=a^202
+        8'b0010_1001:  binv = 8'b1001_0000; // b=a^203
+        8'b0101_0010:  binv = 8'b0100_1000; // b=a^204
+        8'b1010_0100:  binv = 8'b0010_0100; // b=a^205
+        8'b0001_0111:  binv = 8'b0001_0010; // b=a^206
+        8'b0010_1110:  binv = 8'b0000_1001; // b=a^207
+        8'b0101_1100:  binv = 8'b1010_1011; // b=a^208
+        8'b1011_1000:  binv = 8'b1111_1010; // b=a^209
+        8'b0010_1111:  binv = 8'b0111_1101; // b=a^210
+        8'b0101_1110:  binv = 8'b1001_0001; // b=a^211
+        8'b1011_1100:  binv = 8'b1110_0111; // b=a^212
+        8'b0010_0111:  binv = 8'b1101_1100; // b=a^213
+        8'b0100_1110:  binv = 8'b0110_1110; // b=a^214
+        8'b1001_1100:  binv = 8'b0011_0111; // b=a^215
+        8'b0110_0111:  binv = 8'b1011_0100; // b=a^216
+        8'b1100_1110:  binv = 8'b0101_1010; // b=a^217
+        8'b1100_0011:  binv = 8'b0010_1101; // b=a^218
+        8'b1101_1001:  binv = 8'b1011_1001; // b=a^219
+        8'b1110_1101:  binv = 8'b1111_0011; // b=a^220
+        8'b1000_0101:  binv = 8'b1101_0110; // b=a^221
+        8'b0101_0101:  binv = 8'b0110_1011; // b=a^222
+        8'b1010_1010:  binv = 8'b1001_1010; // b=a^223
+        8'b0000_1011:  binv = 8'b0100_1101; // b=a^224
+        8'b0001_0110:  binv = 8'b1000_1001; // b=a^225
+        8'b0010_1100:  binv = 8'b1110_1011; // b=a^226
+        8'b0101_1000:  binv = 8'b1101_1010; // b=a^227
+        8'b1011_0000:  binv = 8'b0110_1101; // b=a^228
+        8'b0011_1111:  binv = 8'b1001_1001; // b=a^229
+        8'b0111_1110:  binv = 8'b1110_0011; // b=a^230
+        8'b1111_1100:  binv = 8'b1101_1110; // b=a^231
+        8'b1010_0111:  binv = 8'b0110_1111; // b=a^232
+        8'b0001_0001:  binv = 8'b1001_1000; // b=a^233
+        8'b0010_0010:  binv = 8'b0100_1100; // b=a^234
+        8'b0100_0100:  binv = 8'b0010_0110; // b=a^235
+        8'b1000_1000:  binv = 8'b0001_0011; // b=a^236
+        8'b0100_1111:  binv = 8'b1010_0110; // b=a^237
+        8'b1001_1110:  binv = 8'b0101_0011; // b=a^238
+        8'b0110_0011:  binv = 8'b1000_0110; // b=a^239
+        8'b1100_0110:  binv = 8'b0100_0011; // b=a^240
+        8'b1101_0011:  binv = 8'b1000_1110; // b=a^241
+        8'b1111_1001:  binv = 8'b0100_0111; // b=a^242
+        8'b1010_1101:  binv = 8'b1000_1100; // b=a^243
+        8'b0000_0101:  binv = 8'b0100_0110; // b=a^244
+        8'b0000_1010:  binv = 8'b0010_0011; // b=a^245
+        8'b0001_0100:  binv = 8'b1011_1110; // b=a^246
+        8'b0010_1000:  binv = 8'b0101_1111; // b=a^247
+        8'b0101_0000:  binv = 8'b1000_0000; // b=a^248
+        8'b1010_0000:  binv = 8'b0100_0000; // b=a^249
+        8'b0001_1111:  binv = 8'b0010_0000; // b=a^250
+        8'b0011_1110:  binv = 8'b0001_0000; // b=a^251
+        8'b0111_1100:  binv = 8'b0000_1000; // b=a^252
+        8'b1111_1000:  binv = 8'b0000_0100; // b=a^253
+        8'b1010_1111:  binv = 8'b0000_0010; // b=a^254
+      endcase
+    GFMULT gfmult(a, binv, imm);
+    assign c = imm;
+
+endmodule
+
+module GFEXP(a, b);
+  input [7:0] a;
+  output [7:0] b;
+
+  /*
+    GF(2^8)
+    primitive polynomial : x^8 + x6 + x^4 + x^3 + x^2 + x + 1
+    a = a^n
+    b = n
+  */
+  
+  reg [7:0] binv;
+  always_comb
+      case (a)
+        8'b0000_0001:  binv = 8'd0; // a=a^0 => 0
+        8'b0000_0010:  binv = 8'd1; // a=a^1 => 1
+        8'b0000_0100:  binv = 8'd2; // a=a^2 => 2
+        8'b0000_1000:  binv = 8'd3; 
+        8'b0001_0000:  binv = 8'd4; 
+        8'b0010_0000:  binv = 8'd5; 
+        8'b0100_0000:  binv = 8'd6; 
+        8'b1000_0000:  binv = 8'd7; 
+        8'b0101_1111:  binv = 8'd8; 
+        8'b1011_1110:  binv = 8'd9; 
+        8'b0010_0011:  binv = 8'd10;
+        8'b0100_0110:  binv = 8'd11;
+        8'b1000_1100:  binv = 8'd12;
+        8'b0100_0111:  binv = 8'd13;
+        8'b1000_1110:  binv = 8'd14;
+        8'b0100_0011:  binv = 8'd15;
+        8'b1000_0110:  binv = 8'd16;
+        8'b0101_0011:  binv = 8'd17;
+        8'b1010_0110:  binv = 8'd18;
+        8'b0001_0011:  binv = 8'd19;
+        8'b0010_0110:  binv = 8'd20;
+        8'b0100_1100:  binv = 8'd21;
+        8'b1001_1000:  binv = 8'd22;
+        8'b0110_1111:  binv = 8'd23;
+        8'b1101_1110:  binv = 8'd24;
+        8'b1110_0011:  binv = 8'd25;
+        8'b1001_1001:  binv = 8'd26;
+        8'b0110_1101:  binv = 8'd27;
+        8'b1101_1010:  binv = 8'd28;
+        8'b1110_1011:  binv = 8'd29;
+        8'b1000_1001:  binv = 8'd30;
+        8'b0100_1101:  binv = 8'd31;
+        8'b1001_1010:  binv = 8'd32;
+        8'b0110_1011:  binv = 8'd33;
+        8'b1101_0110:  binv = 8'd34;
+        8'b1111_0011:  binv = 8'd35;
+        8'b1011_1001:  binv = 8'd36;
+        8'b0010_1101:  binv = 8'd37;
+        8'b0101_1010:  binv = 8'd38;
+        8'b1011_0100:  binv = 8'd39;
+        8'b0011_0111:  binv = 8'd40;
+        8'b0110_1110:  binv = 8'd41;
+        8'b1101_1100:  binv = 8'd42;
+        8'b1110_0111:  binv = 8'd43;
+        8'b1001_0001:  binv = 8'd44;
+        8'b0111_1101:  binv = 8'd45;
+        8'b1111_1010:  binv = 8'd46;
+        8'b1010_1011:  binv = 8'd47;
+        8'b0000_1001:  binv = 8'd48;
+        8'b0001_0010:  binv = 8'd49;
+        8'b0010_0100:  binv = 8'd50;
+        8'b0100_1000:  binv = 8'd51;
+        8'b1001_0000:  binv = 8'd52;
+        8'b0111_1111:  binv = 8'd53;
+        8'b1111_1110:  binv = 8'd54;
+        8'b1010_0011:  binv = 8'd55;
+        8'b0001_1001:  binv = 8'd56;
+        8'b0011_0010:  binv = 8'd57;
+        8'b0110_0100:  binv = 8'd58;
+        8'b1100_1000:  binv = 8'd59;
+        8'b1100_1111:  binv = 8'd60;
+        8'b1100_0001:  binv = 8'd61;
+        8'b1101_1101:  binv = 8'd62;
+        8'b1110_0101:  binv = 8'd63;
+        8'b1001_0101:  binv = 8'd64;
+        8'b0111_0101:  binv = 8'd65;
+        8'b1110_1010:  binv = 8'd66;
+        8'b1000_1011:  binv = 8'd67;
+        8'b0100_1001:  binv = 8'd68;
+        8'b1001_0010:  binv = 8'd69;
+        8'b0111_1011:  binv = 8'd70;
+        8'b1111_0110:  binv = 8'd71;
+        8'b1011_0011:  binv = 8'd72;
+        8'b0011_1001:  binv = 8'd73;
+        8'b0111_0010:  binv = 8'd74;
+        8'b1110_0100:  binv = 8'd75;
+        8'b1001_0111:  binv = 8'd76;
+        8'b0111_0001:  binv = 8'd77;
+        8'b1110_0010:  binv = 8'd78;
+        8'b1001_1011:  binv = 8'd79;
+        8'b0110_1001:  binv = 8'd80;
+        8'b1101_0010:  binv = 8'd81;
+        8'b1111_1011:  binv = 8'd82;
+        8'b1010_1001:  binv = 8'd83;
+        8'b0000_1101:  binv = 8'd84;
+        8'b0001_1010:  binv = 8'd85;
+        8'b0011_0100:  binv = 8'd86;
+        8'b0110_1000:  binv = 8'd87;
+        8'b1101_0000:  binv = 8'd88;
+        8'b1111_1111:  binv = 8'd89;
+        8'b1010_0001:  binv = 8'd90;
+        8'b0001_1101:  binv = 8'd91;
+        8'b0011_1010:  binv = 8'd92;
+        8'b0111_0100:  binv = 8'd93;
+        8'b1110_1000:  binv = 8'd94;
+        8'b1000_1111:  binv = 8'd95;
+        8'b0100_0001:  binv = 8'd96;
+        8'b1000_0010:  binv = 8'd97;
+        8'b0101_1011:  binv = 8'd98;
+        8'b1011_0110:  binv = 8'd99;
+        8'b0011_0011:  binv = 8'd100;
+        8'b0110_0110:  binv = 8'd101;
+        8'b1100_1100:  binv = 8'd102;
+        8'b1100_0111:  binv = 8'd103;
+        8'b1101_0001:  binv = 8'd104;
+        8'b1111_1101:  binv = 8'd105;
+        8'b1010_0101:  binv = 8'd106;
+        8'b0001_0101:  binv = 8'd107;
+        8'b0010_1010:  binv = 8'd108;
+        8'b0101_0100:  binv = 8'd109;
+        8'b1010_1000:  binv = 8'd110;
+        8'b0000_1111:  binv = 8'd111;
+        8'b0001_1110:  binv = 8'd112;
+        8'b0011_1100:  binv = 8'd113;
+        8'b0111_1000:  binv = 8'd114;
+        8'b1111_0000:  binv = 8'd115;
+        8'b1011_1111:  binv = 8'd116;
+        8'b0010_0001:  binv = 8'd117;
+        8'b0100_0010:  binv = 8'd118;
+        8'b1000_0100:  binv = 8'd119;
+        8'b0101_0111:  binv = 8'd120;
+        8'b1010_1110:  binv = 8'd121;
+        8'b0000_0011:  binv = 8'd122;
+        8'b0000_0110:  binv = 8'd123;
+        8'b0000_1100:  binv = 8'd124;
+        8'b0001_1000:  binv = 8'd125;
+        8'b0011_0000:  binv = 8'd126;
+        8'b0110_0000:  binv = 8'd127;
+        8'b1100_0000:  binv = 8'd128;
+        8'b1101_1111:  binv = 8'd129;
+        8'b1110_0001:  binv = 8'd130;
+        8'b1001_1101:  binv = 8'd131;
+        8'b0110_0101:  binv = 8'd132;
+        8'b1100_1010:  binv = 8'd133;
+        8'b1100_1011:  binv = 8'd134;
+        8'b1100_1001:  binv = 8'd135;
+        8'b1100_1101:  binv = 8'd136;
+        8'b1100_0101:  binv = 8'd137;
+        8'b1101_0101:  binv = 8'd138;
+        8'b1111_0101:  binv = 8'd139;
+        8'b1011_0101:  binv = 8'd140;
+        8'b0011_0101:  binv = 8'd141;
+        8'b0110_1010:  binv = 8'd142;
+        8'b1101_0100:  binv = 8'd143;
+        8'b1111_0111:  binv = 8'd144;
+        8'b1011_0001:  binv = 8'd145;
+        8'b0011_1101:  binv = 8'd146;
+        8'b0111_1010:  binv = 8'd147;
+        8'b1111_0100:  binv = 8'd148;
+        8'b1011_0111:  binv = 8'd149;
+        8'b0011_0001:  binv = 8'd150;
+        8'b0110_0010:  binv = 8'd151;
+        8'b1100_0100:  binv = 8'd152;
+        8'b1101_0111:  binv = 8'd153;
+        8'b1111_0001:  binv = 8'd154;
+        8'b1011_1101:  binv = 8'd155;
+        8'b0010_0101:  binv = 8'd156;
+        8'b0100_1010:  binv = 8'd157;
+        8'b1001_0100:  binv = 8'd158;
+        8'b0111_0111:  binv = 8'd159;
+        8'b1110_1110:  binv = 8'd160;
+        8'b1000_0011:  binv = 8'd161;
+        8'b0101_1001:  binv = 8'd162;
+        8'b1011_0010:  binv = 8'd163;
+        8'b0011_1011:  binv = 8'd164;
+        8'b0111_0110:  binv = 8'd165;
+        8'b1110_1100:  binv = 8'd166;
+        8'b1000_0111:  binv = 8'd167;
+        8'b0101_0001:  binv = 8'd168;
+        8'b1010_0010:  binv = 8'd169;
+        8'b0001_1011:  binv = 8'd170;
+        8'b0011_0110:  binv = 8'd171;
+        8'b0110_1100:  binv = 8'd172;
+        8'b1101_1000:  binv = 8'd173;
+        8'b1110_1111:  binv = 8'd174;
+        8'b1000_0001:  binv = 8'd175;
+        8'b0101_1101:  binv = 8'd176;
+        8'b1011_1010:  binv = 8'd177;
+        8'b0010_1011:  binv = 8'd178;
+        8'b0101_0110:  binv = 8'd179;
+        8'b1010_1100:  binv = 8'd180;
+        8'b0000_0111:  binv = 8'd181;
+        8'b0000_1110:  binv = 8'd182;
+        8'b0001_1100:  binv = 8'd183;
+        8'b0011_1000:  binv = 8'd184;
+        8'b0111_0000:  binv = 8'd185;
+        8'b1110_0000:  binv = 8'd186;
+        8'b1001_1111:  binv = 8'd187;
+        8'b0110_0001:  binv = 8'd188;
+        8'b1100_0010:  binv = 8'd189;
+        8'b1101_1011:  binv = 8'd190;
+        8'b1110_1001:  binv = 8'd191;
+        8'b1000_1101:  binv = 8'd192;
+        8'b0100_0101:  binv = 8'd193;
+        8'b1000_1010:  binv = 8'd194;
+        8'b0100_1011:  binv = 8'd195;
+        8'b1001_0110:  binv = 8'd196;
+        8'b0111_0011:  binv = 8'd197;
+        8'b1110_0110:  binv = 8'd198;
+        8'b1001_0011:  binv = 8'd199;
+        8'b0111_1001:  binv = 8'd200;
+        8'b1111_0010:  binv = 8'd201;
+        8'b1011_1011:  binv = 8'd202;
+        8'b0010_1001:  binv = 8'd203;
+        8'b0101_0010:  binv = 8'd204;
+        8'b1010_0100:  binv = 8'd205;
+        8'b0001_0111:  binv = 8'd206;
+        8'b0010_1110:  binv = 8'd207;
+        8'b0101_1100:  binv = 8'd208;
+        8'b1011_1000:  binv = 8'd209;
+        8'b0010_1111:  binv = 8'd210;
+        8'b0101_1110:  binv = 8'd211;
+        8'b1011_1100:  binv = 8'd212;
+        8'b0010_0111:  binv = 8'd213;
+        8'b0100_1110:  binv = 8'd214;
+        8'b1001_1100:  binv = 8'd215;
+        8'b0110_0111:  binv = 8'd216;
+        8'b1100_1110:  binv = 8'd217;
+        8'b1100_0011:  binv = 8'd218;
+        8'b1101_1001:  binv = 8'd219;
+        8'b1110_1101:  binv = 8'd220;
+        8'b1000_0101:  binv = 8'd221;
+        8'b0101_0101:  binv = 8'd222;
+        8'b1010_1010:  binv = 8'd223;
+        8'b0000_1011:  binv = 8'd224;
+        8'b0001_0110:  binv = 8'd225;
+        8'b0010_1100:  binv = 8'd226;
+        8'b0101_1000:  binv = 8'd227;
+        8'b1011_0000:  binv = 8'd228;
+        8'b0011_1111:  binv = 8'd229;
+        8'b0111_1110:  binv = 8'd230;
+        8'b1111_1100:  binv = 8'd231;
+        8'b1010_0111:  binv = 8'd232;
+        8'b0001_0001:  binv = 8'd233;
+        8'b0010_0010:  binv = 8'd234;
+        8'b0100_0100:  binv = 8'd235;
+        8'b1000_1000:  binv = 8'd236;
+        8'b0100_1111:  binv = 8'd237;
+        8'b1001_1110:  binv = 8'd238;
+        8'b0110_0011:  binv = 8'd239;
+        8'b1100_0110:  binv = 8'd240;
+        8'b1101_0011:  binv = 8'd241;
+        8'b1111_1001:  binv = 8'd242;
+        8'b1010_1101:  binv = 8'd243;
+        8'b0000_0101:  binv = 8'd244;
+        8'b0000_1010:  binv = 8'd245;
+        8'b0001_0100:  binv = 8'd246;
+        8'b0010_1000:  binv = 8'd247;
+        8'b0101_0000:  binv = 8'd248;
+        8'b1010_0000:  binv = 8'd249;
+        8'b0001_1111:  binv = 8'd250;
+        8'b0011_1110:  binv = 8'd251;
+        8'b0111_1100:  binv = 8'd252;
+        8'b1111_1000:  binv = 8'd253;
+        8'b1010_1111:  binv = 8'd254;
+
+      endcase
+    assign b = binv;
+
+endmodule
+
+
+module GFMULT(a, b, c);
+  input [7:0] a;
+  input [7:0] b;
+  output [7:0] c;
+
+  /*
+    GF(2^8)
+    primitive polynomial : x^8 + x6 + x^4 + x^3 + x^2 + x + 1
+    a = a^n
+    b = a^m
+    c = a^(n+m)
+  */
+
+  assign c = ({8{b[0]}} & ((a << 0))) ^
+  ({8{b[1]}} & ((a << 1) ^ ({8{a[7]}} & 8'b0101_1111))) ^ 
+  ({8{b[2]}} & ((a << 2) ^ ({8{a[7]}} & 8'b1011_1110) ^ ({8{a[6]}} & 8'b0101_1111))) ^ 
+  ({8{b[3]}} & ((a << 3) ^ ({8{a[7]}} & 8'b0010_0011) ^ ({8{a[6]}} & 8'b1011_1110) ^ ({8{a[5]}} & 8'b0101_1111))) ^
+  ({8{b[4]}} & ((a << 4) ^ ({8{a[7]}} & 8'b0100_0110) ^ ({8{a[6]}} & 8'b0010_0011) ^ ({8{a[5]}} & 8'b1011_1110) ^ ({8{a[4]}} & 8'b0101_1111))) ^
+  ({8{b[5]}} & ((a << 5) ^ ({8{a[7]}} & 8'b1000_1100) ^ ({8{a[6]}} & 8'b0100_0110) ^ ({8{a[5]}} & 8'b0010_0011) ^ ({8{a[4]}} & 8'b1011_1110) ^ ({8{a[3]}} & 8'b0101_1111))) ^
+  ({8{b[6]}} & ((a << 6) ^ ({8{a[7]}} & 8'b0100_0111) ^ ({8{a[6]}} & 8'b1000_1100) ^ ({8{a[5]}} & 8'b0100_0110) ^ ({8{a[4]}} & 8'b0010_0011) ^ ({8{a[3]}} & 8'b1011_1110) ^ ({8{a[2]}} & 8'b0101_1111))) ^ 
+  ({8{b[7]}} & ((a << 7) ^ ({8{a[7]}} & 8'b1000_1110) ^ ({8{a[6]}} & 8'b0100_0111) ^ ({8{a[5]}} & 8'b1000_1100) ^ ({8{a[4]}} & 8'b0100_0110) ^ ({8{a[3]}} & 8'b0010_0011) ^ ({8{a[2]}} & 8'b1011_1110) ^ ({8{a[1]}} & 8'b0101_1111)));
+endmodulemodule RANGE_TABLE_BF16_RID16 #(
+    parameter TH_BASE = 8'h00   // Threshold 레지스터 시작 주소
+)(
+    input  logic        aclk,
+    input  logic        areset_n,
+
+    input  logic [15:0] weight_i [15:0],
+
+    output logic [7:0]  symbol_o [7:0],
+
+    input  logic [7:0]  data_i,
+    input  logic        write_enable_i,
+    input  logic [31:0] addr_i
+);
+
+    // ----------------------------
+    // 1) CSR: 15개의 경계값 (16개 구간용)
+    // ----------------------------
+    // th[0] ~ th[14]까지 총 15개 사용
+    logic [7:0] th [14:0];
+
+    always_ff @(posedge aclk or negedge areset_n) begin
+        if (!areset_n) begin
+            th[0]  <= 8'd117; th[1]  <= 8'd118; th[2]  <= 8'd119;
+            th[3]  <= 8'd120; th[4]  <= 8'd121; th[5]  <= 8'd122;
+            th[6]  <= 8'd123; th[7]  <= 8'd124; th[8]  <= 8'd125;
+            th[9]  <= 8'd126; th[10] <= 8'd127; th[11] <= 8'd128;
+            th[12] <= 8'd129; th[13] <= 8'd130; th[14] <= 8'd131;
+        end
+        else begin
+            if (write_enable_i) begin
+                if ((addr_i[7:0] >= TH_BASE) & (addr_i[7:0] <= (TH_BASE + 8'h0E))) begin
+                    th[addr_i[3:0]] <= data_i;
+                end
+            end
+        end
+    end
+
+    // ----------------------------
+    // 2) Exponent 추출 및 16-bin 분류
+    // ----------------------------
+    logic [7:0] exp_val [15:0];
+    logic [3:0] rid4    [15:0];
+
+    function automatic logic [3:0] classify16 (
+        input logic [7:0] e,
+        input logic [7:0] t [14:0]
+    );
+        if      (e < t[0])  return 4'd0;
+        else if (e < t[1])  return 4'd1;
+        else if (e < t[2])  return 4'd2;
+        else if (e < t[3])  return 4'd3;
+        else if (e < t[4])  return 4'd4;
+        else if (e < t[5])  return 4'd5;
+        else if (e < t[6])  return 4'd6;
+        else if (e < t[7])  return 4'd7;
+        else if (e < t[8])  return 4'd8;
+        else if (e < t[9])  return 4'd9;
+        else if (e < t[10]) return 4'd10;
+        else if (e < t[11]) return 4'd11;
+        else if (e < t[12]) return 4'd12;
+        else if (e < t[13]) return 4'd13;
+        else if (e < t[14]) return 4'd14;
+        else                return 4'd15;
+    endfunction
+
+    genvar i;
+    generate
+        for (i = 0; i < 16; i++) begin : PROC_BLOCK
+            assign exp_val[i] = weight_i[i][14:7];
+            always_comb begin
+                rid4[i] = classify16(exp_val[i], th);
+            end
+        end
+    endgenerate
+
+    // ----------------------------
+    // 3) Symbol 패킹 (4-bit RID * 2 = 8-bit Byte)
+    // ----------------------------
+    genvar k;
+    generate
+        for (k = 0; k < 8; k++) begin : PACK_BYTE
+            assign symbol_o[k] = { rid4[2*k + 1], rid4[2*k] };
+        end
+    endgenerate
+
+endmodulemodule RANGE_TABLE_Recovery #(
+    parameter RE_BASE = 8'h20   // rep_table[0..15] 쓰기 주소: RE_BASE + 0..15
+)(
+    input  logic        aclk,
+    input  logic        areset_n,
+
+    // 원본 BF16 16개
+    input  logic [15:0] weight_i   [15:0],
+    // 원본에서 얻은 심벌 8바이트: 각 바이트 = {RID(odd)[3:0], RID(even)[3:0]}
+    input  logic [7:0]  symbol_i   [7:0],
+    // 복구된 심벌 8바이트: {RID(odd)[3:0], RID(even)[3:0]}
+    input  logic [7:0]  recovered  [7:0],
+
+    // CSR write: rep_table[RID(0..15)] = 대표 exponent(8비트)
+    input  logic [7:0]  data_i,
+    input  logic        write_enable_i,
+    input  logic [31:0] addr_i,
+
+    // 복구 결과 출력: exponent만 대표값으로 교체된 BF16 16개
+    output logic [15:0] weight_o   [15:0]
+);
+
+    // 1) 대표 exponent 테이블 (동기식 CSR)
+    logic [7:0] rep_table [15:0];
+
+    always_ff @(posedge aclk or negedge areset_n) begin
+        if (!areset_n) begin
+            // 기본 대표값: [115,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131]
+            rep_table[ 0] <= 8'd115;
+            rep_table[ 1] <= 8'd117;
+            rep_table[ 2] <= 8'd118;
+            rep_table[ 3] <= 8'd119;
+            rep_table[ 4] <= 8'd120;
+            rep_table[ 5] <= 8'd121;
+            rep_table[ 6] <= 8'd122;
+            rep_table[ 7] <= 8'd123;
+            rep_table[ 8] <= 8'd124;
+            rep_table[ 9] <= 8'd125;
+            rep_table[10] <= 8'd126;
+            rep_table[11] <= 8'd127;
+            rep_table[12] <= 8'd128;
+            rep_table[13] <= 8'd129;
+            rep_table[14] <= 8'd130;
+            rep_table[15] <= 8'd131;
+        end else if (write_enable_i) begin
+            // addr_i[7:0] == RE_BASE + idx(0..15) → rep_table[idx] = data_i
+            if ((addr_i[7:0] >= RE_BASE) && (addr_i[7:0] <= (RE_BASE + 8'h0F)))
+                rep_table[addr_i[3:0]] <= data_i;
+        end
+    end
+
+    // 2) 원본/복구 RID 각각 언팩 (조합)
+    //    각 바이트는 {odd[7:4], even[3:0]} 규칙
+    logic [3:0] rid_orig [15:0];
+    logic [3:0] rid_rec  [15:0];
+
+    genvar u;
+    generate
+        for (u = 0; u < 8; u++) begin : UNPACK_RID_ORIG_REC
+            // even index = 2u, odd index = 2u+1
+            assign rid_orig[2*u]     = symbol_i[u][3:0]; // even
+            assign rid_orig[2*u + 1] = symbol_i[u][7:4]; // odd
+
+            assign rid_rec [2*u]     = recovered[u][3:0]; // even
+            assign rid_rec [2*u + 1] = recovered[u][7:4]; // odd
+        end
+    endgenerate
+
+    // 3) 서로 다를 때만 대표 exponent로 치환, 같으면 원래 exponent 유지 (조합)
+    genvar k;
+    generate
+        for (k = 0; k < 16; k++) begin : REBUILD_BF16
+            wire [7:0] exp_orig = weight_i[k][14:7];
+            wire [7:0] exp_new  = rep_table[rid_rec[k]];
+            wire       diff     = (rid_rec[k] != rid_orig[k]);
+            wire [7:0] exp_sel  = diff ? exp_new : exp_orig;
+
+            assign weight_o[k] = { weight_i[k][15], exp_sel, weight_i[k][6:0] };
+        end
+    endgenerate
+
+endmodule
+module RS8b_DECODER(
+    input  logic        aclk,
+    input  logic        areset_n,
+
+    input  logic [7:0]  data_i,
+    input  logic        write_enable_i,
+    input  logic [31:0] addr_i,
+
+    input  logic [15:0] weight_i [15:0],
+    input  logic [7:0]  pp [1:0],
+    
+    output logic [3:0]  error_loc_o,
+    output logic [1:0]  decode_res_o,
+    
+    output logic [15:0] weight_o [15:0]
+);
+
+    logic [7:0] symbol [7:0];
+    logic [79:0] data80;
+    logic [63:0] data64;
+    logic [7:0] vp_recovered[7:0];
+
+    // 1. Range Mapping: BF16 Weight -> 8-bit Symbols (4-bit RID x 2)
+    RANGE_TABLE_BF16_RID16 u_range_table (
+        .aclk           (aclk),
+        .areset_n       (areset_n),
+        .weight_i       (weight_i),
+        .symbol_o       (symbol),
+        .data_i         (data_i),
+        .write_enable_i (write_enable_i),
+        .addr_i         (addr_i)
+    );
+
+    // 2. Codeword Packing: {Sym0, Sym1, ..., Sym7, PP0, PP1}
+    assign data80 = {symbol[0], symbol[1], symbol[2], symbol[3], 
+                     symbol[4], symbol[5], symbol[6], symbol[7], 
+                     pp[0], pp[1]};
+
+    // 3. AMD Chipkill Based RS Decoder
+    AMDCHIPKILL_DECODER amdchipkill_decoder(
+        .codeword_in            (data80),
+        .Error_location_out     (error_loc_o),
+        .Decode_result_out      (decode_res_o),
+        .data_out               (data64)
+    );
+
+    // 4. Data Extraction: MSB-First Alignment
+    // data64[63:56] is Corrected Symbol 0
+    assign  vp_recovered[0]   =   data64[63:56];
+    assign  vp_recovered[1]   =   data64[55:48];
+    assign  vp_recovered[2]   =   data64[47:40];
+    assign  vp_recovered[3]   =   data64[39:32];
+    assign  vp_recovered[4]   =   data64[31:24];
+    assign  vp_recovered[5]   =   data64[23:16];
+    assign  vp_recovered[6]   =   data64[15:8];
+    assign  vp_recovered[7]   =   data64[7:0];
+
+    // 5. Weight Recovery
+    RANGE_TABLE_Recovery recovery_table (
+        .aclk           (aclk),
+        .areset_n       (areset_n),
+        .weight_i       (weight_i),
+        .symbol_i       (symbol),
+        .recovered      (vp_recovered),
+        .data_i         (data_i),
+        .write_enable_i (write_enable_i),
+        .addr_i         (addr_i),
+        .weight_o       (weight_o)
+    );
+
+endmodulemodule RS8b_ENCODER(
+    input  logic        aclk,
+    input  logic        areset_n,
+
+    input  logic [7:0]  data_i,
+    input  logic        write_enable_i,
+    input  logic [31:0] addr_i,
+
+    input  logic [15:0] weight_i [15:0],
+    output logic [7:0]  p_o      [1:0]
+);
+    logic [7:0] symbol [7:0];
+    logic [63:0] data64;
+    logic [79:0] codeword;
+
+    RANGE_TABLE_BF16_RID16 u_range_table (
+        .aclk           (aclk),
+        .areset_n       (areset_n),
+        .weight_i       (weight_i),
+        .symbol_o       (symbol),
+        .data_i         (data_i),
+        .write_enable_i (write_enable_i),
+        .addr_i         (addr_i)
+    );
+
+assign data64 = {symbol[0], symbol[1], symbol[2], symbol[3], symbol[4], symbol[5], symbol[6], symbol[7]};
+
+    RS_ENCODER u_rs_encoder (
+        .data_in        (data64),
+        .codeword_out   (codeword)
+    );
+
+assign  p_o[0]  =   codeword[7:0];
+assign  p_o[1]  =   codeword[15:8];
+
+endmodulemodule RS_ENCODER(input [63:0] data_in,
+                      output [79:0] codeword_out);
+  // data_in: 64-bit input dataward
+  // codeword_out: 80-bit RS codeword output
+
+  // over GF(2^8) primitive polynomial, systematic-encoding
+  // primitive polynomial = x^8 + x6 + x^4 + x^3 + x^2 + x + 1
+
+  /*
+    G-Matrix
+
+    1 0 0 0 0 0 0 0 1 1
+    0 1 0 0 0 0 0 0 1 a^1
+    0 0 1 0 0 0 0 0 1 a^2
+    0 0 0 1 0 0 0 0 1 a^3
+    0 0 0 0 1 0 0 0 1 a^4
+    0 0 0 0 0 1 0 0 1 a^5
+    0 0 0 0 0 0 1 0 1 a^6
+    0 0 0 0 0 0 0 1 1 a^7
+
+    H-Matrix
+
+    1 1   1   1   1   1   1   1   1 0 
+    1 a^1 a^2 a^3 a^4 a^5 a^6 a^7 0 1 
+
+  */
+
+
+  wire [7:0] parity [7:0]; // front [7:0] => each element is a size of 8bit, backward [7:0] => eight elements
+
+  GFMULT gmult_00(data_in[63:56],8'b0000_0001, parity[7]); // data[63:56] x a^0 = parity[7] (8bit)
+  GFMULT gmult_01(data_in[55:48],8'b0000_0010, parity[6]); // data[55:48] x a^1 = parity[6] (8bit)
+  GFMULT gmult_02(data_in[47:40],8'b0000_0100, parity[5]); // data[47:40] x a^2 = parity[5] (8bit)
+  GFMULT gmult_03(data_in[39:32],8'b0000_1000, parity[4]); // data[39:32] x a^3 = parity[4] (8bit)
+  GFMULT gmult_04(data_in[31:24],8'b0001_0000, parity[3]); // data[31:24] x a^4 = parity[3] (8bit)
+  GFMULT gmult_05(data_in[23:16],8'b0010_0000, parity[2]); // data[23:16] x a^5 = parity[2] (8bit)
+  GFMULT gmult_06(data_in[15:8] ,8'b0100_0000, parity[1]); // data[15:8]  x a^6 = parity[1] (8bit)
+  GFMULT gmult_07(data_in[7:0]  ,8'b1000_0000, parity[0]); // data[7:0]   x a^7 = parity[0] (8bit) 	
+  
+  assign codeword_out[79:16] = data_in[63:0]; // systematic- encoding
+  assign codeword_out[15:8] = data_in[63:56] ^ data_in[55:48] ^ data_in[47:40] ^ data_in[39:32] ^ data_in[31:24] ^ data_in[23:16] ^ data_in[15:8] ^ data_in[7:0];
+  assign codeword_out[7:0] = parity[7] ^ parity[6] ^ parity[5] ^ parity[4] ^ parity[3] ^ parity[2] ^ parity[1] ^ parity[0];
+
+endmodule
+module SYNDROME_GENERATOR(input [79:0] codeword_in,
+                      output [15:0] syndrome_out);
+  // codeword_in: 80-bit RS codeword input
+  // syndrome_out : 16-bit syndrome output (two 8-bit syndromes)
+
+  /*
+    G-Matrix
+
+    1 0 0 0 0 0 0 0 1 1
+    0 1 0 0 0 0 0 0 1 a^1
+    0 0 1 0 0 0 0 0 1 a^2
+    0 0 0 1 0 0 0 0 1 a^3
+    0 0 0 0 1 0 0 0 1 a^4
+    0 0 0 0 0 1 0 0 1 a^5
+    0 0 0 0 0 0 1 0 1 a^6
+    0 0 0 0 0 0 0 1 1 a^7
+
+    H-Matrix
+
+    1 1   1   1   1   1   1   1   1 0 
+    1 a^1 a^2 a^3 a^4 a^5 a^6 a^7 0 1 
+
+  */
+
+
+  wire [7:0] parity [7:0]; // front [7:0] => each element is a size of 8bits, backward [7:0] => eight elements
+  GFMULT gmult_00(codeword_in[79:72],8'b0000_0001, parity[7]); // data[79:72] x a^0 = parity[7] (8bit)
+  GFMULT gmult_01(codeword_in[71:64],8'b0000_0010, parity[6]); // data[71:64] x a^1 = parity[6] (8bit)
+  GFMULT gmult_02(codeword_in[63:56],8'b0000_0100, parity[5]); // data[63:56] x a^2 = parity[5] (8bit)
+  GFMULT gmult_03(codeword_in[55:48],8'b0000_1000, parity[4]); // data[55:48] x a^3 = parity[4] (8bit)
+  GFMULT gmult_04(codeword_in[47:40],8'b0001_0000, parity[3]); // data[47:40] x a^4 = parity[3] (8bit)
+  GFMULT gmult_05(codeword_in[39:32],8'b0010_0000, parity[2]); // data[39:32] x a^5 = parity[2] (8bit)
+  GFMULT gmult_06(codeword_in[31:24],8'b0100_0000, parity[1]); // data[31:24] x a^6 = parity[1] (8bit)
+  GFMULT gmult_07(codeword_in[23:16],8'b1000_0000, parity[0]); // data[23:16] x a^7 = parity[0] (8bit)
+  // GFMULT gmult_08(codeword_in[7:0]  ,8'b0000_0001, parity[0]); // data[23:16] x a^0 = parity[0] (8bit)
+
+  assign syndrome_out[15:8] = codeword_in[79:72] ^ codeword_in[71:64] ^ codeword_in[63:56] ^ codeword_in[55:48] ^ codeword_in[47:40] ^ codeword_in[39:32] ^ codeword_in[31:24] ^ codeword_in[23:16] ^ codeword_in[15:8];
+  assign syndrome_out[7:0] = parity[7] ^ parity[6] ^ parity[5] ^ parity[4] ^ parity[3] ^ parity[2] ^ parity[1] ^ parity[0] ^ codeword_in[7:0];
+
+endmodule
+

@@ -1,0 +1,1 @@
+$ROOT_PATH/sim/tb/RS4b_ALL_TB.sv

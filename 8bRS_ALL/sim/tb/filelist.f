@@ -1,0 +1,2 @@
+// $ROOT_PATH/sim/tb/SYNDROME_GENERATOR_TB_TOP.sv
+$ROOT_PATH/sim/tb/RS8b_ALL_TB.sv
