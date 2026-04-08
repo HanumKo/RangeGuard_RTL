@@ -1,0 +1,56 @@
+ 
+****************************************
+Report : cell
+Design : RS8b_DECODER
+Version: Q-2019.12-SP5-5
+Date   : Wed Apr  8 15:36:15 2026
+****************************************
+
+Attributes:
+    b - black box (unknown)
+    h - hierarchical
+    n - noncombinational
+    r - removable
+    u - contains unmapped logic
+
+Cell                      Reference       Library             Area  Attributes
+--------------------------------------------------------------------------------
+U2                        STP_BUF_S_6     um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          1.680000  
+U3                        STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U4                        STP_INV_S_0P65  um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.336000  
+U5                        STP_INV_S_0P65  um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.336000  
+U6                        STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U7                        STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U8                        STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U9                        STP_BUF_U_1     um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U10                       STP_INV_S_1     um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.336000  
+U11                       STP_INV_S_1     um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.336000  
+U12                       STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U13                       STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U14                       STP_TIE0_1      um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.672000  
+U15                       STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+U16                       STP_BUF_1       um28nchslogl35hsl140f_ssgwc0p81v125c
+                                                          0.504000  
+amdchipkill_decoder       AMDCHIPKILL_DECODER             1335.767985
+                                                                    h, n
+recovery_table            RANGE_TABLE_Recovery            2882.711947
+                                                                    h, n
+u_range_table             RANGE_TABLE_BF16_RID16          6433.727938
+                                                                    h, n
+--------------------------------------------------------------------------------
+Total 18 cells                                            10660.439869
+1

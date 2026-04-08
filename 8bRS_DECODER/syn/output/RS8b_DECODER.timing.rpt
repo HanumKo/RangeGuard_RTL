@@ -1,0 +1,746 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 10
+        -max_paths 10
+Design : RS8b_DECODER
+Version: Q-2019.12-SP5-5
+Date   : Wed Apr  8 15:36:16 2026
+****************************************
+
+Operating Conditions: SSGWC0P81V125C   Library: um28nchslogl35hsl140f_ssgwc0p81v125c
+Wire Load Model Mode: enclosed
+
+  Startpoint: u_range_table/th_reg[10][6]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[3][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[10][6]/CK (STP_FDPSBQ_2)           0.00       0.00 r
+  u_range_table/th_reg[10][6]/Q (STP_FDPSBQ_2)            0.05       0.05 r
+  u_range_table/U1131/X (STP_INV_4)                       0.02       0.07 f
+  u_range_table/U3266/X (STP_BUF_2)                       0.03       0.10 f
+  u_range_table/U1462/X (STP_ND2_G_3)                     0.01       0.11 r
+  u_range_table/U2882/X (STP_ND3_2)                       0.02       0.14 f
+  u_range_table/U2862/X (STP_OAOI211_2)                   0.03       0.16 r
+  u_range_table/U2857/X (STP_OAOI211_2)                   0.03       0.19 f
+  u_range_table/U2675/X (STP_INV_2)                       0.02       0.21 r
+  u_range_table/U2504/X (STP_NR3_G_2)                     0.02       0.23 f
+  u_range_table/U2661/X (STP_NR3_G_2)                     0.02       0.25 r
+  u_range_table/U4399/X (STP_NR2_S_3)                     0.02       0.27 f
+  u_range_table/U2493/X (STP_NR2_2)                       0.02       0.29 r
+  u_range_table/U1605/X (STP_ND2_S_5)                     0.02       0.31 f
+  u_range_table/symbol_o[1][0] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/codeword_in[64] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/U283/X (STP_EO3_3)                  0.05       0.36 r
+  amdchipkill_decoder/U335/X (STP_EO3_3)                  0.08       0.43 f
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.08       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 r
+  amdchipkill_decoder/U223/X (STP_NR2_G_12)               0.02       0.65 f
+  amdchipkill_decoder/U190/X (STP_ND2_S_6)                0.02       0.67 r
+  amdchipkill_decoder/U110/X (STP_EN2_8)                  0.06       0.73 f
+  amdchipkill_decoder/data_out[55] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.73 f
+  recovery_table/recovered[1][7] (RANGE_TABLE_Recovery)
+                                                          0.00       0.73 f
+  recovery_table/U1033/X (STP_INV_11)                     0.02       0.75 r
+  recovery_table/U324/X (STP_NR3_G_8)                     0.02       0.76 f
+  recovery_table/U1309/X (STP_AOI22_2)                    0.02       0.79 r
+  recovery_table/U54/X (STP_ND4_1)                        0.04       0.83 f
+  recovery_table/U1032/X (STP_AOI21_0P75)                 0.02       0.86 r
+  recovery_table/U1474/X (STP_ND2_S_0P8)                  0.01       0.87 f
+  recovery_table/weight_o[3][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 f
+  weight_o[3][13] (out)                                   0.00       0.87 f
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[4][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[3][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[4][5]/CK (STP_FDPSBQ_2)            0.00       0.00 r
+  u_range_table/th_reg[4][5]/Q (STP_FDPSBQ_2)             0.06       0.06 f
+  u_range_table/U2315/X (STP_INV_2P5)                     0.02       0.08 r
+  u_range_table/U553/X (STP_OR2_1)                        0.03       0.11 r
+  u_range_table/U5783/X (STP_OAI31_G_3)                   0.03       0.14 f
+  u_range_table/U1403/X (STP_NR2_S_3)                     0.02       0.16 r
+  u_range_table/U1402/X (STP_AOI21_2)                     0.02       0.18 f
+  u_range_table/U1042/X (STP_ND2_S_5)                     0.02       0.20 r
+  u_range_table/U1350/X (STP_ND2_S_6)                     0.02       0.21 f
+  u_range_table/U1213/X (STP_OR3B_4)                      0.04       0.25 f
+  u_range_table/U1596/X (STP_NR2_S_4)                     0.02       0.27 r
+  u_range_table/symbol_o[2][7] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/codeword_in[63] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/U264/X (STP_EO2_S_6)                0.05       0.33 f
+  amdchipkill_decoder/U326/X (STP_EN3_3)                  0.08       0.41 r
+  amdchipkill_decoder/U123/X (STP_EN2_6)                  0.06       0.46 r
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.05       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 r
+  amdchipkill_decoder/U223/X (STP_NR2_G_12)               0.02       0.65 f
+  amdchipkill_decoder/U190/X (STP_ND2_S_6)                0.02       0.67 r
+  amdchipkill_decoder/U110/X (STP_EN2_8)                  0.06       0.73 f
+  amdchipkill_decoder/data_out[55] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.73 f
+  recovery_table/recovered[1][7] (RANGE_TABLE_Recovery)
+                                                          0.00       0.73 f
+  recovery_table/U1033/X (STP_INV_11)                     0.02       0.75 r
+  recovery_table/U324/X (STP_NR3_G_8)                     0.02       0.76 f
+  recovery_table/U1309/X (STP_AOI22_2)                    0.02       0.79 r
+  recovery_table/U54/X (STP_ND4_1)                        0.04       0.83 f
+  recovery_table/U1032/X (STP_AOI21_0P75)                 0.02       0.86 r
+  recovery_table/U1474/X (STP_ND2_S_0P8)                  0.01       0.87 f
+  recovery_table/weight_o[3][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 f
+  weight_o[3][13] (out)                                   0.00       0.87 f
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[10][6]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[10][6]/CK (STP_FDPSBQ_2)           0.00       0.00 r
+  u_range_table/th_reg[10][6]/Q (STP_FDPSBQ_2)            0.05       0.05 r
+  u_range_table/U1131/X (STP_INV_4)                       0.02       0.07 f
+  u_range_table/U3266/X (STP_BUF_2)                       0.03       0.10 f
+  u_range_table/U1462/X (STP_ND2_G_3)                     0.01       0.11 r
+  u_range_table/U2882/X (STP_ND3_2)                       0.02       0.14 f
+  u_range_table/U2862/X (STP_OAOI211_2)                   0.03       0.16 r
+  u_range_table/U2857/X (STP_OAOI211_2)                   0.03       0.19 f
+  u_range_table/U2675/X (STP_INV_2)                       0.02       0.21 r
+  u_range_table/U2504/X (STP_NR3_G_2)                     0.02       0.23 f
+  u_range_table/U2661/X (STP_NR3_G_2)                     0.02       0.25 r
+  u_range_table/U4399/X (STP_NR2_S_3)                     0.02       0.27 f
+  u_range_table/U2493/X (STP_NR2_2)                       0.02       0.29 r
+  u_range_table/U1605/X (STP_ND2_S_5)                     0.02       0.31 f
+  u_range_table/symbol_o[1][0] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/codeword_in[64] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/U283/X (STP_EO3_3)                  0.05       0.36 r
+  amdchipkill_decoder/U335/X (STP_EO3_3)                  0.08       0.43 f
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.08       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U70/X (STP_ND2_G_2)                      0.02       0.84 f
+  recovery_table/U928/X (STP_INV_1P5)                     0.01       0.85 r
+  recovery_table/U2012/X (STP_OAOI211_2)                  0.01       0.86 f
+  recovery_table/U2052/X (STP_ND2_G_1)                    0.01       0.87 r
+  recovery_table/weight_o[0][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][13] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[4][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[4][5]/CK (STP_FDPSBQ_2)            0.00       0.00 r
+  u_range_table/th_reg[4][5]/Q (STP_FDPSBQ_2)             0.06       0.06 f
+  u_range_table/U2315/X (STP_INV_2P5)                     0.02       0.08 r
+  u_range_table/U553/X (STP_OR2_1)                        0.03       0.11 r
+  u_range_table/U5783/X (STP_OAI31_G_3)                   0.03       0.14 f
+  u_range_table/U1403/X (STP_NR2_S_3)                     0.02       0.16 r
+  u_range_table/U1402/X (STP_AOI21_2)                     0.02       0.18 f
+  u_range_table/U1042/X (STP_ND2_S_5)                     0.02       0.20 r
+  u_range_table/U1350/X (STP_ND2_S_6)                     0.02       0.21 f
+  u_range_table/U1213/X (STP_OR3B_4)                      0.04       0.25 f
+  u_range_table/U1596/X (STP_NR2_S_4)                     0.02       0.27 r
+  u_range_table/symbol_o[2][7] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/codeword_in[63] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/U264/X (STP_EO2_S_6)                0.05       0.33 f
+  amdchipkill_decoder/U326/X (STP_EN3_3)                  0.08       0.41 r
+  amdchipkill_decoder/U123/X (STP_EN2_6)                  0.06       0.46 r
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.05       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U70/X (STP_ND2_G_2)                      0.02       0.84 f
+  recovery_table/U928/X (STP_INV_1P5)                     0.01       0.85 r
+  recovery_table/U2012/X (STP_OAOI211_2)                  0.01       0.86 f
+  recovery_table/U2052/X (STP_ND2_G_1)                    0.01       0.87 r
+  recovery_table/weight_o[0][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][13] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[4][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[3][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[4][5]/CK (STP_FDPSBQ_2)            0.00       0.00 r
+  u_range_table/th_reg[4][5]/Q (STP_FDPSBQ_2)             0.06       0.06 f
+  u_range_table/U2315/X (STP_INV_2P5)                     0.02       0.08 r
+  u_range_table/U553/X (STP_OR2_1)                        0.03       0.11 r
+  u_range_table/U5783/X (STP_OAI31_G_3)                   0.03       0.14 f
+  u_range_table/U1225/X (STP_NR2_2)                       0.02       0.16 r
+  u_range_table/U2524/X (STP_ND2_S_2)                     0.02       0.18 f
+  u_range_table/U1042/X (STP_ND2_S_5)                     0.02       0.20 r
+  u_range_table/U1350/X (STP_ND2_S_6)                     0.02       0.21 f
+  u_range_table/U1213/X (STP_OR3B_4)                      0.04       0.25 f
+  u_range_table/U1596/X (STP_NR2_S_4)                     0.02       0.27 r
+  u_range_table/symbol_o[2][7] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/codeword_in[63] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/U264/X (STP_EO2_S_6)                0.05       0.33 f
+  amdchipkill_decoder/U326/X (STP_EN3_3)                  0.08       0.41 r
+  amdchipkill_decoder/U123/X (STP_EN2_6)                  0.06       0.46 r
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.05       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 r
+  amdchipkill_decoder/U223/X (STP_NR2_G_12)               0.02       0.65 f
+  amdchipkill_decoder/U190/X (STP_ND2_S_6)                0.02       0.67 r
+  amdchipkill_decoder/U110/X (STP_EN2_8)                  0.06       0.73 f
+  amdchipkill_decoder/data_out[55] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.73 f
+  recovery_table/recovered[1][7] (RANGE_TABLE_Recovery)
+                                                          0.00       0.73 f
+  recovery_table/U1033/X (STP_INV_11)                     0.02       0.75 r
+  recovery_table/U324/X (STP_NR3_G_8)                     0.02       0.76 f
+  recovery_table/U1309/X (STP_AOI22_2)                    0.02       0.79 r
+  recovery_table/U54/X (STP_ND4_1)                        0.04       0.83 f
+  recovery_table/U1032/X (STP_AOI21_0P75)                 0.02       0.86 r
+  recovery_table/U1474/X (STP_ND2_S_0P8)                  0.01       0.87 f
+  recovery_table/weight_o[3][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 f
+  weight_o[3][13] (out)                                   0.00       0.87 f
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[10][6]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][12]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[10][6]/CK (STP_FDPSBQ_2)           0.00       0.00 r
+  u_range_table/th_reg[10][6]/Q (STP_FDPSBQ_2)            0.05       0.05 r
+  u_range_table/U1131/X (STP_INV_4)                       0.02       0.07 f
+  u_range_table/U3266/X (STP_BUF_2)                       0.03       0.10 f
+  u_range_table/U1462/X (STP_ND2_G_3)                     0.01       0.11 r
+  u_range_table/U2882/X (STP_ND3_2)                       0.02       0.14 f
+  u_range_table/U2862/X (STP_OAOI211_2)                   0.03       0.16 r
+  u_range_table/U2857/X (STP_OAOI211_2)                   0.03       0.19 f
+  u_range_table/U2675/X (STP_INV_2)                       0.02       0.21 r
+  u_range_table/U2504/X (STP_NR3_G_2)                     0.02       0.23 f
+  u_range_table/U2661/X (STP_NR3_G_2)                     0.02       0.25 r
+  u_range_table/U4399/X (STP_NR2_S_3)                     0.02       0.27 f
+  u_range_table/U2493/X (STP_NR2_2)                       0.02       0.29 r
+  u_range_table/U1605/X (STP_ND2_S_5)                     0.02       0.31 f
+  u_range_table/symbol_o[1][0] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/codeword_in[64] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/U283/X (STP_EO3_3)                  0.05       0.36 r
+  amdchipkill_decoder/U335/X (STP_EO3_3)                  0.08       0.43 f
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.08       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U82/X (STP_ND2_S_3)                      0.02       0.83 f
+  recovery_table/U1135/X (STP_INV_2)                      0.01       0.85 r
+  recovery_table/U1060/X (STP_AOI21_1P5)                  0.01       0.86 f
+  recovery_table/U1073/X (STP_ND2_S_0P8)                  0.01       0.87 r
+  recovery_table/weight_o[0][12] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][12] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[4][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[4][5]/CK (STP_FDPSBQ_2)            0.00       0.00 r
+  u_range_table/th_reg[4][5]/Q (STP_FDPSBQ_2)             0.06       0.06 f
+  u_range_table/U2315/X (STP_INV_2P5)                     0.02       0.08 r
+  u_range_table/U553/X (STP_OR2_1)                        0.03       0.11 r
+  u_range_table/U5783/X (STP_OAI31_G_3)                   0.03       0.14 f
+  u_range_table/U1225/X (STP_NR2_2)                       0.02       0.16 r
+  u_range_table/U2524/X (STP_ND2_S_2)                     0.02       0.18 f
+  u_range_table/U1042/X (STP_ND2_S_5)                     0.02       0.20 r
+  u_range_table/U1350/X (STP_ND2_S_6)                     0.02       0.21 f
+  u_range_table/U1213/X (STP_OR3B_4)                      0.04       0.25 f
+  u_range_table/U1596/X (STP_NR2_S_4)                     0.02       0.27 r
+  u_range_table/symbol_o[2][7] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/codeword_in[63] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/U264/X (STP_EO2_S_6)                0.05       0.33 f
+  amdchipkill_decoder/U326/X (STP_EN3_3)                  0.08       0.41 r
+  amdchipkill_decoder/U123/X (STP_EN2_6)                  0.06       0.46 r
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.05       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U70/X (STP_ND2_G_2)                      0.02       0.84 f
+  recovery_table/U928/X (STP_INV_1P5)                     0.01       0.85 r
+  recovery_table/U2012/X (STP_OAOI211_2)                  0.01       0.86 f
+  recovery_table/U2052/X (STP_ND2_G_1)                    0.01       0.87 r
+  recovery_table/weight_o[0][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][13] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[4][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][12]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[4][5]/CK (STP_FDPSBQ_2)            0.00       0.00 r
+  u_range_table/th_reg[4][5]/Q (STP_FDPSBQ_2)             0.06       0.06 f
+  u_range_table/U2315/X (STP_INV_2P5)                     0.02       0.08 r
+  u_range_table/U553/X (STP_OR2_1)                        0.03       0.11 r
+  u_range_table/U5783/X (STP_OAI31_G_3)                   0.03       0.14 f
+  u_range_table/U1403/X (STP_NR2_S_3)                     0.02       0.16 r
+  u_range_table/U1402/X (STP_AOI21_2)                     0.02       0.18 f
+  u_range_table/U1042/X (STP_ND2_S_5)                     0.02       0.20 r
+  u_range_table/U1350/X (STP_ND2_S_6)                     0.02       0.21 f
+  u_range_table/U1213/X (STP_OR3B_4)                      0.04       0.25 f
+  u_range_table/U1596/X (STP_NR2_S_4)                     0.02       0.27 r
+  u_range_table/symbol_o[2][7] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/codeword_in[63] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.27 r
+  amdchipkill_decoder/U264/X (STP_EO2_S_6)                0.05       0.33 f
+  amdchipkill_decoder/U326/X (STP_EN3_3)                  0.08       0.41 r
+  amdchipkill_decoder/U123/X (STP_EN2_6)                  0.06       0.46 r
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.05       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U82/X (STP_ND2_S_3)                      0.02       0.83 f
+  recovery_table/U1135/X (STP_INV_2)                      0.01       0.85 r
+  recovery_table/U1060/X (STP_AOI21_1P5)                  0.01       0.86 f
+  recovery_table/U1073/X (STP_ND2_S_0P8)                  0.01       0.87 r
+  recovery_table/weight_o[0][12] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][12] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[10][6]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[10][6]/CK (STP_FDPSBQ_2)           0.00       0.00 r
+  u_range_table/th_reg[10][6]/Q (STP_FDPSBQ_2)            0.05       0.05 r
+  u_range_table/U1131/X (STP_INV_4)                       0.02       0.07 f
+  u_range_table/U3266/X (STP_BUF_2)                       0.03       0.10 f
+  u_range_table/U1462/X (STP_ND2_G_3)                     0.01       0.11 r
+  u_range_table/U2882/X (STP_ND3_2)                       0.02       0.14 f
+  u_range_table/U2862/X (STP_OAOI211_2)                   0.03       0.16 r
+  u_range_table/U2857/X (STP_OAOI211_2)                   0.03       0.19 f
+  u_range_table/U2675/X (STP_INV_2)                       0.02       0.21 r
+  u_range_table/U2504/X (STP_NR3_G_2)                     0.02       0.23 f
+  u_range_table/U2661/X (STP_NR3_G_2)                     0.02       0.25 r
+  u_range_table/U4399/X (STP_NR2_S_3)                     0.02       0.27 f
+  u_range_table/U2493/X (STP_NR2_2)                       0.02       0.29 r
+  u_range_table/U1605/X (STP_ND2_S_5)                     0.02       0.31 f
+  u_range_table/symbol_o[1][0] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/codeword_in[64] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/U283/X (STP_EO3_3)                  0.05       0.36 r
+  amdchipkill_decoder/U335/X (STP_EO3_3)                  0.08       0.43 f
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.08       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U70/X (STP_ND2_G_2)                      0.02       0.84 f
+  recovery_table/U928/X (STP_INV_1P5)                     0.01       0.85 r
+  recovery_table/U2012/X (STP_OAOI211_2)                  0.01       0.86 f
+  recovery_table/U2052/X (STP_ND2_G_1)                    0.01       0.87 r
+  recovery_table/weight_o[0][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][13] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+  Startpoint: u_range_table/th_reg[10][6]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: weight_o[0][13]
+            (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_DECODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  AMDCHIPKILL_DECODER
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_Recovery
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[10][6]/CK (STP_FDPSBQ_2)           0.00       0.00 r
+  u_range_table/th_reg[10][6]/Q (STP_FDPSBQ_2)            0.05       0.05 r
+  u_range_table/U1131/X (STP_INV_4)                       0.02       0.07 f
+  u_range_table/U3266/X (STP_BUF_2)                       0.03       0.10 f
+  u_range_table/U1462/X (STP_ND2_G_3)                     0.01       0.11 r
+  u_range_table/U2882/X (STP_ND3_2)                       0.02       0.14 f
+  u_range_table/U2862/X (STP_OAOI211_2)                   0.03       0.16 r
+  u_range_table/U2857/X (STP_OAOI211_2)                   0.03       0.19 f
+  u_range_table/U2675/X (STP_INV_2)                       0.02       0.21 r
+  u_range_table/U2504/X (STP_NR3_G_2)                     0.02       0.23 f
+  u_range_table/U2661/X (STP_NR3_G_2)                     0.02       0.25 r
+  u_range_table/U4399/X (STP_NR2_S_3)                     0.02       0.27 f
+  u_range_table/U2493/X (STP_NR2_2)                       0.02       0.29 r
+  u_range_table/U1605/X (STP_ND2_S_5)                     0.02       0.31 f
+  u_range_table/symbol_o[1][0] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/codeword_in[64] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.31 f
+  amdchipkill_decoder/U283/X (STP_EO3_3)                  0.05       0.36 r
+  amdchipkill_decoder/U335/X (STP_EO3_3)                  0.08       0.43 f
+  amdchipkill_decoder/U379/X (STP_EN3_3)                  0.08       0.52 f
+  amdchipkill_decoder/U268/X (STP_NR4_8)                  0.04       0.55 r
+  amdchipkill_decoder/U216/X (STP_ND2_S_16)               0.03       0.58 f
+  amdchipkill_decoder/U284/X (STP_EN2_8)                  0.05       0.63 f
+  amdchipkill_decoder/U260/X (STP_NR2_G_12)               0.02       0.65 r
+  amdchipkill_decoder/U257/X (STP_ND2_S_6)                0.02       0.67 f
+  amdchipkill_decoder/U186/X (STP_EN2_8)                  0.05       0.72 r
+  amdchipkill_decoder/data_out[58] (AMDCHIPKILL_DECODER)
+                                                          0.00       0.72 r
+  recovery_table/recovered[0][2] (RANGE_TABLE_Recovery)
+                                                          0.00       0.72 r
+  recovery_table/U201/X (STP_EN2_4)                       0.06       0.79 f
+  recovery_table/U299/X (STP_NR3_G_16)                    0.03       0.82 r
+  recovery_table/U70/X (STP_ND2_G_2)                      0.02       0.84 f
+  recovery_table/U928/X (STP_INV_1P5)                     0.01       0.85 r
+  recovery_table/U2012/X (STP_OAOI211_2)                  0.01       0.86 f
+  recovery_table/U2052/X (STP_ND2_G_1)                    0.01       0.87 r
+  recovery_table/weight_o[0][13] (RANGE_TABLE_Recovery)
+                                                          0.00       0.87 r
+  weight_o[0][13] (out)                                   0.00       0.87 r
+  data arrival time                                                  0.87
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.87
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.17
+
+
+1

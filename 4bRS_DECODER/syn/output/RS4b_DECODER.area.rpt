@@ -1,0 +1,48 @@
+ 
+****************************************
+Report : area
+Design : RS4b_DECODER
+Version: Q-2019.12-SP5-5
+Date   : Wed Apr  8 16:03:56 2026
+****************************************
+
+Library(s) Used:
+
+    um28nchslogl35hsl140f_ssgwc0p81v125c (File: /media/0/LogicLibraries/UMC/28nm/35hs/hsl/svt/latest/liberty/logic_synth/um28nchslogl35hsl140f_ssgwc0p81v125c.db)
+
+Number of ports:                         1603
+Number of nets:                          5048
+Number of cells:                         3904
+Number of combinational cells:           3555
+Number of sequential cells:               346
+Number of macros/black boxes:               0
+Number of buf/inv:                        495
+Number of references:                       6
+
+Combinational area:               3166.463957
+Buf/Inv area:                      194.375998
+Noncombinational area:             978.095989
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                  4144.559946
+Total area:                 undefined
+
+The above information was reported from the logical library. The following are from the physical library:
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  ---------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-     Noncombi-  Black-
+                                  Total      Total    national   national   boxes   Design
+--------------------------------  ---------  -------  ---------  ---------  ------  ---------------------
+RS4b_DECODER                      4144.5599    100.0     2.8560     0.0000  0.0000  RS4b_DECODER
+recovery_table                     640.7520     15.5   549.3600    91.3920  0.0000  RANGE_TABLE_Recovery
+second_level_decoder              2628.3600     63.4  1829.5200   798.8400  0.0000  SECOND_LEVEL_DECODER
+u_range_table                      872.5920     21.1   784.7280    87.8640  0.0000  RANGE_TABLE_BF16_RID4
+--------------------------------  ---------  -------  ---------  ---------  ------  ---------------------
+Total                                                 3166.4640   978.0960  0.0000
+
+1

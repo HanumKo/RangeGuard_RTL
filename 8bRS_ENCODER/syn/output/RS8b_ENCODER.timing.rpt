@@ -1,0 +1,547 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 10
+        -max_paths 10
+Design : RS8b_ENCODER
+Version: Q-2019.12-SP5-5
+Date   : Wed Apr  8 15:17:03 2026
+****************************************
+
+Operating Conditions: SSGWC0P81V125C   Library: um28nchslogl35hsl140f_ssgwc0p81v125c
+Wire Load Model Mode: enclosed
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][1] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U970/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U3591/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U820/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1231/X (STP_NR4_1)                       0.02       0.25 f
+  u_range_table/U1230/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U22/X (STP_ND2_S_1)                       0.04       0.32 f
+  u_range_table/U264/X (STP_AN4B_2)                       0.02       0.34 r
+  u_range_table/U76/X (STP_ND2_S_2)                       0.03       0.36 f
+  u_range_table/U731/X (STP_NR4_2)                        0.03       0.39 r
+  u_range_table/U64/X (STP_OAI211_1)                      0.04       0.44 f
+  u_range_table/U1339/X (STP_OAI211_1)                    0.04       0.48 r
+  u_range_table/symbol_o[5][5] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.48 r
+  u_rs_encoder/data_in[21] (RS_ENCODER)                   0.00       0.48 r
+  u_rs_encoder/U27/X (STP_EO3_2)                          0.09       0.57 r
+  u_rs_encoder/U31/X (STP_EN2_4)                          0.05       0.62 f
+  u_rs_encoder/U75/X (STP_EO3_3)                          0.08       0.70 f
+  u_rs_encoder/codeword_out[1] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][1] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][1] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U970/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U3591/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U820/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1231/X (STP_NR4_1)                       0.02       0.25 f
+  u_range_table/U1230/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U22/X (STP_ND2_S_1)                       0.04       0.32 f
+  u_range_table/U264/X (STP_AN4B_2)                       0.02       0.34 r
+  u_range_table/U76/X (STP_ND2_S_2)                       0.03       0.36 f
+  u_range_table/U731/X (STP_NR4_2)                        0.03       0.39 r
+  u_range_table/U64/X (STP_OAI211_1)                      0.04       0.44 f
+  u_range_table/U1339/X (STP_OAI211_1)                    0.04       0.48 r
+  u_range_table/symbol_o[5][5] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.48 r
+  u_rs_encoder/data_in[21] (RS_ENCODER)                   0.00       0.48 r
+  u_rs_encoder/U27/X (STP_EO3_2)                          0.09       0.57 r
+  u_rs_encoder/U31/X (STP_EN2_4)                          0.05       0.62 f
+  u_rs_encoder/U75/X (STP_EO3_3)                          0.08       0.70 f
+  u_rs_encoder/codeword_out[1] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][1] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][1] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U970/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U3591/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U820/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1231/X (STP_NR4_1)                       0.02       0.25 f
+  u_range_table/U1230/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U22/X (STP_ND2_S_1)                       0.04       0.32 f
+  u_range_table/U264/X (STP_AN4B_2)                       0.02       0.34 r
+  u_range_table/U76/X (STP_ND2_S_2)                       0.03       0.36 f
+  u_range_table/U731/X (STP_NR4_2)                        0.03       0.39 r
+  u_range_table/U64/X (STP_OAI211_1)                      0.04       0.44 f
+  u_range_table/U1339/X (STP_OAI211_1)                    0.04       0.48 r
+  u_range_table/symbol_o[5][5] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.48 r
+  u_rs_encoder/data_in[21] (RS_ENCODER)                   0.00       0.48 r
+  u_rs_encoder/U27/X (STP_EO3_2)                          0.09       0.57 r
+  u_rs_encoder/U31/X (STP_EN2_4)                          0.05       0.62 f
+  u_rs_encoder/U75/X (STP_EO3_3)                          0.08       0.70 f
+  u_rs_encoder/codeword_out[1] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][1] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][3] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U80/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[3] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][3] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][2] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U78/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[2] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][2] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][3] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U80/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[3] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][3] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][2] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U78/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[2] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][2] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][3] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U80/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[3] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][3] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][2] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U78/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[2] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][2] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_range_table/th_reg[1][5]
+              (rising edge-triggered flip-flop clocked by aclk)
+  Endpoint: p_o[0][2] (output port clocked by aclk)
+  Path Group: aclk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  RS8b_ENCODER       ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RANGE_TABLE_BF16_RID16
+                     ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+  RS_ENCODER         ZeroWLM               um28nchslogl35hsl140f_ssgwc0p81v125c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock aclk (rise edge)                                  0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_range_table/th_reg[1][5]/CK (STP_FDPSBQ_1)            0.00       0.00 r
+  u_range_table/th_reg[1][5]/Q (STP_FDPSBQ_1)             0.11       0.11 f
+  u_range_table/U954/X (STP_ND2_S_0P8)                    0.04       0.16 r
+  u_range_table/U2613/X (STP_ND4_MM_1)                    0.03       0.19 f
+  u_range_table/U801/X (STP_OAOI211_0P5)                  0.04       0.23 r
+  u_range_table/U1211/X (STP_NR4_0P5)                     0.02       0.25 f
+  u_range_table/U1210/X (STP_AO2BB2_0P5)                  0.03       0.28 r
+  u_range_table/U23/X (STP_ND2_S_1)                       0.03       0.31 f
+  u_range_table/U263/X (STP_NR2_S_3)                      0.02       0.33 r
+  u_range_table/U21/X (STP_ND2_S_3)                       0.02       0.35 f
+  u_range_table/U2664/X (STP_NR3_G_2)                     0.02       0.37 r
+  u_range_table/U2674/X (STP_AN2_3)                       0.03       0.41 r
+  u_range_table/U1350/X (STP_INV_S_0P65)                  0.01       0.42 f
+  u_range_table/U1348/X (STP_OAI22_V3S_1)                 0.02       0.44 r
+  u_range_table/symbol_o[2][6] (RANGE_TABLE_BF16_RID16)
+                                                          0.00       0.44 r
+  u_rs_encoder/data_in[46] (RS_ENCODER)                   0.00       0.44 r
+  u_rs_encoder/U37/X (STP_EO2_S_2)                        0.06       0.50 f
+  u_rs_encoder/U20/X (STP_EO3_2)                          0.05       0.56 r
+  u_rs_encoder/U38/X (STP_EO3_3)                          0.05       0.61 f
+  u_rs_encoder/U76/X (STP_EO3_3)                          0.05       0.66 r
+  u_rs_encoder/U78/X (STP_EO3_3)                          0.04       0.70 f
+  u_rs_encoder/codeword_out[2] (RS_ENCODER)               0.00       0.70 f
+  p_o[0][2] (out)                                         0.00       0.70 f
+  data arrival time                                                  0.70
+
+  clock aclk (rise edge)                                  0.70       0.70
+  clock network delay (ideal)                             0.00       0.70
+  output external delay                                   0.00       0.70
+  data required time                                                 0.70
+  --------------------------------------------------------------------------
+  data required time                                                 0.70
+  data arrival time                                                 -0.70
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1

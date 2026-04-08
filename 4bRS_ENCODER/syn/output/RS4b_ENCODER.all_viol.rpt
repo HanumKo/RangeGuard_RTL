@@ -1,0 +1,157 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : constraint
+        -all_violators
+        -verbose
+Design : RS4b_ENCODER
+Version: Q-2019.12-SP5-5
+Date   : Wed Apr  8 15:44:54 2026
+****************************************
+
+
+    Net: p_o[0][0]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[0][1]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[0][2]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[0][3]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[1][0]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[1][1]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[1][2]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[1][3]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[2][0]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[2][1]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[2][2]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[2][3]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[3][0]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[3][1]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[3][2]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Net: p_o[3][3]
+
+    Capacitance        0.0000000000
+  - min_capacitance    0.0000746000
+  ------------------------------
+    Slack              -0.0000746000  (VIOLATED)
+
+
+    Design: RS4b_ENCODER
+
+    max_area           0.0000000000
+  - Current Area       762.0479736328
+  ------------------------------
+    Slack              -762.0479736328  (VIOLATED)
+
+
+    Design: RS4b_ENCODER
+
+    max_leakage_power      0.0000000000
+  - Current Leakage Power  10255.8544921875
+  ----------------------------------
+    Slack                  -10255.8544921875  (VIOLATED)
+
+
+1
