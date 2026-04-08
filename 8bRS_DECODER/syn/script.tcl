@@ -35,7 +35,7 @@ set clk_period [expr $clk_period * $delay_percentage]
 if {[sizeof_collection [get_ports $clk_port_name]] > 0} {
   # Create real clock if clock port is found
   set clk_name $clk_port_name
-  create_clock -period $clk_period -name $clk_name
+  create_clock -period $clk_period -name $clk_name [get_ports $clk_port_name]
   # If real clock, set infinite drive strength
   set_drive 0 $clk_name
 } elseif {[sizeof_collection [get_ports $clk_port_name]] == 0} {
@@ -62,6 +62,7 @@ set_max_area 0
 # ---------------------------------------
 
 set_ungroup [get_cells u_range_table] false
+set_ungroup [get_cells amdchipkill_decoder] false
 set_ungroup [get_cells recovery_table] false
 
 compile_ultra
