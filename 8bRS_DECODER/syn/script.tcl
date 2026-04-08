@@ -62,7 +62,6 @@ set_max_area 0
 # ---------------------------------------
 
 set_ungroup [get_cells u_range_table] false
-set_ungroup [get_cells second_level_decoder] false
 set_ungroup [get_cells recovery_table] false
 
 compile_ultra
