@@ -15,53 +15,53 @@ module RS8b_DECODER(
     output logic [15:0] weight_o [15:0]
 );
 
-    logic [7:0] symbol [7:0];
-    logic [79:0] data80;
-    logic [63:0] data64;
-    logic [7:0] vp_recovered[7:0];
+    logic [7:0]  symbol_dec [7:0];
+    logic [7:0]  symbol_rec [7:0];
+    logic [15:0] weight_rec_in [15:0];
+    logic [63:0] data64_s2;
+    logic [7:0]  vp_recovered_s2[7:0];
 
     // 1. Range Mapping: BF16 Weight -> 8-bit Symbols (4-bit RID x 2)
-    RANGE_TABLE_BF16_RID16 u_range_table (
+    RANGE_TABLE_STAGE u_range_table (
         .aclk           (aclk),
         .areset_n       (areset_n),
         .weight_i       (weight_i),
-        .symbol_o       (symbol),
         .data_i         (data_i),
         .write_enable_i (write_enable_i),
-        .addr_i         (addr_i)
+        .addr_i         (addr_i),
+        .symbol_dec_o   (symbol_dec),
+        .symbol_rec_o   (symbol_rec),
+        .weight_rec_o   (weight_rec_in)
     );
 
-    // 2. Codeword Packing: {Sym0, Sym1, ..., Sym7, PP0, PP1}
-    assign data80 = {symbol[0], symbol[1], symbol[2], symbol[3], 
-                    symbol[4], symbol[5], symbol[6], symbol[7], 
-                    pp[1], pp[0]};
-
-    // 3. AMD Chipkill Based RS Decoder
-    AMDCHIPKILL_DECODER amdchipkill_decoder(
-        .codeword_in            (data80),
-        .Error_location_out     (error_loc_o),
-        .Decode_result_out      (decode_res_o),
-        .data_out               (data64)
+    AMDCHIPKILL_DECODER_STAGE amdchipkill_decoder (
+        .aclk           (aclk),
+        .areset_n       (areset_n),
+        .symbol_i       (symbol_dec),
+        .pp             (pp),
+        .data_o         (data64_s2),
+        .error_loc_o    (error_loc_o),
+        .decode_res_o   (decode_res_o)
     );
 
     // 4. Data Extraction: MSB-First Alignment
-    // data64[63:56] is Corrected Symbol 0
-    assign  vp_recovered[0]   =   data64[63:56];
-    assign  vp_recovered[1]   =   data64[55:48];
-    assign  vp_recovered[2]   =   data64[47:40];
-    assign  vp_recovered[3]   =   data64[39:32];
-    assign  vp_recovered[4]   =   data64[31:24];
-    assign  vp_recovered[5]   =   data64[23:16];
-    assign  vp_recovered[6]   =   data64[15:8];
-    assign  vp_recovered[7]   =   data64[7:0];
+    // data64_s2[63:56] is Corrected Symbol 0
+    assign  vp_recovered_s2[0]   =   data64_s2[63:56];
+    assign  vp_recovered_s2[1]   =   data64_s2[55:48];
+    assign  vp_recovered_s2[2]   =   data64_s2[47:40];
+    assign  vp_recovered_s2[3]   =   data64_s2[39:32];
+    assign  vp_recovered_s2[4]   =   data64_s2[31:24];
+    assign  vp_recovered_s2[5]   =   data64_s2[23:16];
+    assign  vp_recovered_s2[6]   =   data64_s2[15:8];
+    assign  vp_recovered_s2[7]   =   data64_s2[7:0];
 
     // 5. Weight Recovery
     RANGE_TABLE_Recovery recovery_table (
         .aclk           (aclk),
         .areset_n       (areset_n),
-        .weight_i       (weight_i),
-        .symbol_i       (symbol),
-        .recovered      (vp_recovered),
+        .weight_i       (weight_rec_in),
+        .symbol_i       (symbol_rec),
+        .recovered      (vp_recovered_s2),
         .data_i         (data_i),
         .write_enable_i (write_enable_i),
         .addr_i         (addr_i),

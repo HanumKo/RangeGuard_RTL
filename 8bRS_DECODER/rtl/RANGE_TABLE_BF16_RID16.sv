@@ -41,26 +41,26 @@ module RANGE_TABLE_BF16_RID16 #(
     // ----------------------------
     logic [7:0] exp_val [15:0];
     logic [3:0] rid4    [15:0];
+    logic [7:0] symbol_comb [7:0];
 
     function automatic logic [3:0] classify16 (
-        input logic [7:0] e,
-        input logic [7:0] t [14:0]
+        input logic [7:0] e
     );
-        if      (e < t[0])  return 4'd0;
-        else if (e < t[1])  return 4'd1;
-        else if (e < t[2])  return 4'd2;
-        else if (e < t[3])  return 4'd3;
-        else if (e < t[4])  return 4'd4;
-        else if (e < t[5])  return 4'd5;
-        else if (e < t[6])  return 4'd6;
-        else if (e < t[7])  return 4'd7;
-        else if (e < t[8])  return 4'd8;
-        else if (e < t[9])  return 4'd9;
-        else if (e < t[10]) return 4'd10;
-        else if (e < t[11]) return 4'd11;
-        else if (e < t[12]) return 4'd12;
-        else if (e < t[13]) return 4'd13;
-        else if (e < t[14]) return 4'd14;
+        if      (e < th[0])  return 4'd0;
+        else if (e < th[1])  return 4'd1;
+        else if (e < th[2])  return 4'd2;
+        else if (e < th[3])  return 4'd3;
+        else if (e < th[4])  return 4'd4;
+        else if (e < th[5])  return 4'd5;
+        else if (e < th[6])  return 4'd6;
+        else if (e < th[7])  return 4'd7;
+        else if (e < th[8])  return 4'd8;
+        else if (e < th[9])  return 4'd9;
+        else if (e < th[10]) return 4'd10;
+        else if (e < th[11]) return 4'd11;
+        else if (e < th[12]) return 4'd12;
+        else if (e < th[13]) return 4'd13;
+        else if (e < th[14]) return 4'd14;
         else                return 4'd15;
     endfunction
 
@@ -69,7 +69,7 @@ module RANGE_TABLE_BF16_RID16 #(
         for (i = 0; i < 16; i++) begin : PROC_BLOCK
             assign exp_val[i] = weight_i[i][14:7];
             always_comb begin
-                rid4[i] = classify16(exp_val[i], th);
+                rid4[i] = classify16(exp_val[i]);
             end
         end
     endgenerate
@@ -80,8 +80,21 @@ module RANGE_TABLE_BF16_RID16 #(
     genvar k;
     generate
         for (k = 0; k < 8; k++) begin : PACK_BYTE
-            assign symbol_o[k] = { rid4[2*k + 1], rid4[2*k] };
+            assign symbol_comb[k] = { rid4[2*k + 1], rid4[2*k] };
         end
     endgenerate
+
+    integer j;
+    always_ff @(posedge aclk or negedge areset_n) begin
+        if (!areset_n) begin
+            for (j = 0; j < 8; j++) begin
+                symbol_o[j] <= '0;
+            end
+        end else begin
+            for (j = 0; j < 8; j++) begin
+                symbol_o[j] <= symbol_comb[j];
+            end
+        end
+    end
 
 endmodule

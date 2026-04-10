@@ -1,6 +1,10 @@
 `timescale 1ns/1ps
 
-module tb_RS8b_INTEGRATED;
+module tb_RS8b_ALL;
+    localparam integer PIPELINE_SETTLE_CYCLES = 6;
+    localparam logic [7:0] EXP_BASE = 8'd115;
+    localparam logic [7:0] EXP_ERR  = 8'd118;
+
     logic        aclk;
     logic        areset_n;
 
@@ -8,13 +12,13 @@ module tb_RS8b_INTEGRATED;
     logic        csr_we;
     logic [31:0] csr_addr;
 
-    logic [15:0] weight_in  [15:0];
+    logic [15:0] weight_in     [15:0];
     logic [15:0] weight_to_dec [15:0];
-    logic [7:0]  parity_gen [1:0];
-    
+    logic [7:0]  parity_gen    [1:0];
+
     logic [3:0]  error_loc_o;
     logic [1:0]  decode_res_o;
-    logic [15:0] weight_out [15:0];
+    logic [15:0] weight_out    [15:0];
 
     RS8b_ENCODER encoder_inst (
         .aclk           (aclk),
@@ -33,116 +37,140 @@ module tb_RS8b_INTEGRATED;
         .write_enable_i (csr_we),
         .addr_i         (csr_addr),
         .weight_i       (weight_to_dec),
-        .pp             (parity_gen), 
+        .pp             (parity_gen),
         .error_loc_o    (error_loc_o),
         .decode_res_o   (decode_res_o),
         .weight_o       (weight_out)
     );
 
     initial begin
-        aclk = 0;
+        aclk = 1'b0;
         forever #5 aclk = ~aclk;
     end
 
-    integer pass_count = 0;
-    integer fail_count = 0;
-
-    task check_pass_fail(input string case_name, input logic [1:0] expected_res);
-        logic data_match;
-        data_match = 1;
-
-        for (int i=0; i<16; i++) begin
-            if (weight_in[i][14:7] !== weight_out[i][14:7]) begin
-                data_match = 0;
-            end
-        end
-
-        if ((decode_res_o === expected_res) && data_match) begin
-            $display("[RESULT] %s : [PASS]", case_name);
-            pass_count++;
-        end else begin
-            $display("[RESULT] %s : [FAIL]", case_name);
-            if (decode_res_o !== expected_res) 
-                $display("  -> Error: Status mismatch (Exp: %b, Got: %b)", expected_res, decode_res_o);
-            if (!data_match) 
-                $display("  -> Error: Data mismatch between IN and OUT");
-            fail_count++;
+    task wait_cycles(input integer cycles);
+        begin
+            repeat (cycles) @(posedge aclk);
+            #1;
         end
     endtask
 
-    task sync_weights();
-        for (int i=0; i<16; i++) weight_to_dec[i] = weight_in[i];
+    task reset_to_base_pattern;
+        begin
+            for (int i = 0; i < 16; i = i + 1) begin
+                weight_in[i]     = {1'b0, EXP_BASE, 7'h00};
+                weight_to_dec[i] = {1'b0, EXP_BASE, 7'h00};
+            end
+        end
+    endtask
+
+    task sync_weights;
+        begin
+            for (int i = 0; i < 16; i = i + 1) begin
+                weight_to_dec[i] = weight_in[i];
+            end
+        end
+    endtask
+
+    task expect_recovered_matches_original(
+        input integer case_id,
+        input logic [1:0] expected_res
+    );
+        begin
+            if ($isunknown(decode_res_o)) begin
+                $display("Case %0d FAILED: decode_res_o is unknown: %b", case_id, decode_res_o);
+                $finish;
+            end
+            if ($isunknown(error_loc_o)) begin
+                $display("Case %0d FAILED: error_loc_o is unknown: %b", case_id, error_loc_o);
+                $finish;
+            end
+            if (decode_res_o !== expected_res) begin
+                $display(
+                    "Case %0d FAILED: expected decode_res_o=%b, got %b",
+                    case_id,
+                    expected_res,
+                    decode_res_o
+                );
+                $finish;
+            end
+            for (int i = 0; i < 16; i = i + 1) begin
+                if ($isunknown(weight_out[i])) begin
+                    $display("Case %0d FAILED: weight_out[%0d] is unknown: %h", case_id, i, weight_out[i]);
+                    $finish;
+                end
+                if (weight_out[i] !== weight_in[i]) begin
+                    $display(
+                        "Case %0d FAILED: mismatch at index %0d. expected=%h got=%h",
+                        case_id,
+                        i,
+                        weight_in[i],
+                        weight_out[i]
+                    );
+                    $finish;
+                end
+            end
+        end
+    endtask
+
+    task run_case_no_error;
+        begin
+            reset_to_base_pattern();
+            wait_cycles(2);
+            sync_weights();
+            wait_cycles(PIPELINE_SETTLE_CYCLES);
+            expect_recovered_matches_original(1, 2'b00);
+            $display("[Case 1] no error path passed");
+        end
+    endtask
+
+    task run_case_single_weight_error;
+        begin
+            for (int idx = 0; idx < 16; idx = idx + 1) begin
+                reset_to_base_pattern();
+                wait_cycles(2);
+                sync_weights();
+                weight_to_dec[idx] = {1'b0, EXP_ERR, 7'h00};
+                wait_cycles(PIPELINE_SETTLE_CYCLES);
+                expect_recovered_matches_original(2, 2'b01);
+                $display("[Case 2] single-weight error corrected at index %0d", idx);
+            end
+        end
+    endtask
+
+    task run_case_single_symbol_error;
+        begin
+            for (int sym = 0; sym < 8; sym = sym + 1) begin
+                reset_to_base_pattern();
+                wait_cycles(2);
+                sync_weights();
+                weight_to_dec[2*sym]   = {1'b0, EXP_ERR, 7'h00};
+                weight_to_dec[2*sym+1] = {1'b0, EXP_ERR, 7'h00};
+                wait_cycles(PIPELINE_SETTLE_CYCLES);
+                expect_recovered_matches_original(3, 2'b01);
+                $display("[Case 3] single-symbol error corrected at symbol %0d", sym);
+            end
+        end
     endtask
 
     initial begin
-        areset_n = 0; csr_we = 0;
-        for (int i=0; i<16; i++) weight_in[i] = {1'b0, 8'd115, 7'h00}; 
-        sync_weights();
-        #20 areset_n = 1; #20;
+        areset_n = 1'b0;
+        csr_we   = 1'b0;
+        csr_data = 8'h00;
+        csr_addr = 32'h0000_0000;
+        reset_to_base_pattern();
 
-        $display("\n=======================================================");
-        $display("RS8b ENCODER + DECODER INTEGRATED EXHAUSTIVE TEST");
-        $display("=======================================================");
+        wait_cycles(2);
+        areset_n = 1'b1;
+        wait_cycles(2);
 
-        // 베이스 데이터 설정
-        for (int i=0; i<16; i++) weight_in[i] = {1'b0, 8'd122, 7'h00};
-        sync_weights();
-        #100;
-        
-        display_status("[Case 0] No Error Injection");
-        check_pass_fail("Case 0 (No Error)", 2'b00); // NE 확인
+        run_case_no_error();
+        run_case_single_weight_error();
+        run_case_single_symbol_error();
 
-        $display("\n=======================================================");
-        $display("[Test Stage 1] All Single Weight Errors (1 weight per symbol)");
-        $display("=======================================================");
-        for (int i = 0; i < 16; i++) begin
-            sync_weights(); // 원본 복구
-            weight_to_dec[i] = {1'b0, 8'd135, 7'h00}; // 특정 Weight에 에러 주입
-            #100;
-            check_pass_fail($sformatf("Single Weight Error at Index %0d", i), 2'b01); // CE 확인
-        end
-
-        $display("\n=======================================================");
-        $display("[Test Stage 2] All Single Symbol Errors (2 weights in same symbol)");
-        $display("=======================================================");
-        for (int sym = 0; sym < 8; sym++) begin
-            sync_weights(); // 원본 복구
-            weight_to_dec[2*sym]   = {1'b0, 8'd135, 7'h00}; // 짝수 인덱스 에러
-            weight_to_dec[2*sym+1] = {1'b0, 8'd135, 7'h00}; // 홀수 인덱스 에러
-            #100;
-            check_pass_fail($sformatf("Single Symbol Error at Symbol %0d (Idx %0d & %0d)", sym, 2*sym, 2*sym+1), 2'b01);
-        end
-
-        $display("\n=======================================================");
-        $display("FINAL TEST SUMMARY");
-        $display("  TOTAL PASS: %0d", pass_count);
-        $display("  TOTAL FAIL: %0d", fail_count);
-        if (fail_count == 0) $display("  OVERALL STATUS: SUCCESS");
-        else                 $display("  OVERALL STATUS: FAILED");
-        $display("=======================================================");
-        #50 $finish;
+        $display("RS8b_ALL_TB: all integrated correction checks passed.");
+        #20;
+        $finish;
     end
-
-    task display_status(input string msg);
-        string res_str;
-        case (decode_res_o)
-            2'b00: res_str = "NE (No Error)";
-            2'b01: res_str = "CE (Correctable)";
-            2'b10: res_str = "DUE (Uncorrectable)";
-            default: res_str = "UNKNOWN";
-        endcase
-
-        $display("\n--- %s ---", msg);
-        $display("DECODER STATUS: %s | ERROR LOC: %0d", res_str, error_loc_o);
-        $write("ENCODER IN (ORG): ");
-        for (int i=0; i<16; i++) $write("%3d ", weight_in[i][14:7]);
-        $display("");
-        $write("DECODER IN (ERR): ");
-        for (int i=0; i<16; i++) $write("%3d ", weight_to_dec[i][14:7]);
-        $display("");
-        $write("DECODER OUT(REC): ");
-        for (int i=0; i<16; i++) $write("%3d ", weight_out[i][14:7]);
-        $display("");
-    endtask
 
 endmodule

@@ -41,27 +41,24 @@ module AMDCHIPKILL_DECODER(input [79:0] codeword_in,
   // CE: implement error correction, forward Error location value => Decode result = 01 (CE)
 
     always_comb begin    
-      // DUE 'or' NE
-      if(decode_result != 2'b01) begin
-         data=codeword_in[79:16];
-      end 
-      if(decode_result == 2'b01) begin
-         codeword=codeword_in;
-         case(error_location)
-            4'b0000: codeword[79:72]^=error_value;
-            4'b0001: codeword[71:64]^=error_value;
-            4'b0010: codeword[63:56]^=error_value;
-            4'b0011: codeword[55:48]^=error_value;
-            4'b0100: codeword[47:40]^=error_value;
-            4'b0101: codeword[39:32]^=error_value;
-            4'b0110: codeword[31:24]^=error_value;
-            4'b0111: codeword[23:16]^=error_value;
-            4'b1000: codeword[15:8] ^=error_value;
-            4'b1001: codeword[7:0]  ^=error_value;
-            default: codeword=codeword;
+      codeword = codeword_in;
+      data = codeword_in[79:16];
+
+      if (decode_result == 2'b01) begin
+         unique case (error_location)
+            4'b0000: codeword[79:72] = codeword_in[79:72] ^ error_value;
+            4'b0001: codeword[71:64] = codeword_in[71:64] ^ error_value;
+            4'b0010: codeword[63:56] = codeword_in[63:56] ^ error_value;
+            4'b0011: codeword[55:48] = codeword_in[55:48] ^ error_value;
+            4'b0100: codeword[47:40] = codeword_in[47:40] ^ error_value;
+            4'b0101: codeword[39:32] = codeword_in[39:32] ^ error_value;
+            4'b0110: codeword[31:24] = codeword_in[31:24] ^ error_value;
+            4'b0111: codeword[23:16] = codeword_in[23:16] ^ error_value;
+            4'b1000: codeword[15:8]  = codeword_in[15:8]  ^ error_value;
+            4'b1001: codeword[7:0]   = codeword_in[7:0]   ^ error_value;
+            default: ;
          endcase
-         //$display("after codeword : %b", codeword);
-         data=codeword[79:16];
+         data = codeword[79:16];
       end
    end
 
