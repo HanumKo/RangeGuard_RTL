@@ -64,6 +64,9 @@ set_max_area 0
 set_ungroup [get_cells u_range_table] false
 set_ungroup [get_cells amdchipkill_decoder] false
 set_ungroup [get_cells recovery_table] false
+set_boundary_optimization [get_cells u_range_table] false
+set_boundary_optimization [get_cells amdchipkill_decoder] false
+set_boundary_optimization [get_cells recovery_table] false
 
 compile_ultra
 

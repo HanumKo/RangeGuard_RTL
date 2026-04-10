@@ -43,37 +43,27 @@ module ERROR_INFORMATION(input [15:0] Syndrome_in,
     //GFDIV error_value00(Syndrome_in[7:0],Syndrome_in[15:8], Error_location_gfdiv); // a^(50+?, 78+?, ...)/a^(25+?, 39+?, ...) => a^(25, 39, ...)  
     //GFDIV error_value01(Syndrome_in[15:8], Error_location_gfdiv, Error_value); // a^(25+?)/a^(a^25) => a^? (error value)
     
-   always_comb begin    
-     if(Syndrome_in[7:0]==8'b0000_0000 && Syndrome_in[15:8]!=8'b0000_0000)begin // 8th chip errors
+   always_comb begin
+     Error_location_reg = 4'b0000;
+     Error_value = 8'b0000_0000;
+     Decode_result = 2'b00;
+
+     if (Syndrome_in[15:0] == 16'b0000_0000_0000_0000) begin
+        Decode_result = 2'b00; // NE
+     end else if (Syndrome_in[7:0] == 8'b0000_0000 && Syndrome_in[15:8] != 8'b0000_0000) begin
         Error_location_reg = 4'b1000;
-        Error_value=Syndrome_in[15:8];
-        Decode_result=2'b01; //CE
-     end
-     if(Syndrome_in[7:0]!=8'b0000_0000 && Syndrome_in[15:8]==8'b0000_0000)begin // 9th chip errors
+        Error_value = Syndrome_in[15:8];
+        Decode_result = 2'b01; // CE
+     end else if (Syndrome_in[7:0] != 8'b0000_0000 && Syndrome_in[15:8] == 8'b0000_0000) begin
         Error_location_reg = 4'b1001;
-        Error_value=Syndrome_in[7:0];
-        Decode_result=2'b01; //CE
-     end
-     if(Syndrome_in[7:0]!=8'b0000_0000 && Syndrome_in[15:8]!=8'b0000_0000 && Error_location_gfexp<=8'd7) begin // 0~7th chip errors
-        //$display("error location div : %b",Error_location_gdiv);
-         //$display("error information error location : %d",Error_location_gfexp);
-         //$display("CE!");
-         Error_location_reg = Error_location_gfexp[3:0]; // 0000 ~ 0111
-         Error_value=Syndrome_in[15:8];
-         Decode_result=2'b01; // CE
-     end
-     if(Syndrome_in[7:0]!=8'b0000_0000 && Syndrome_in[15:8]!=8'b0000_0000 && Error_location_gfexp>8'd7) begin // 0~7th chip errors
-        //$display("error location div : %b",Error_location_gdiv);
-         //$display("error information error location : %d",Error_location_gfexp);
-         //$display("DUE");
-         Error_location_reg = 4'b0000;
-         Error_value=8'b0000_0000;
-         Decode_result=2'b10; // DUE
-     end
-     if(Syndrome_in[15:0]==16'b0000_0000_0000_0000) begin
-        Error_location_reg = 4'b0000;
-        Error_value=8'b0000_0000;
-        Decode_result=2'b00; // NE
+        Error_value = Syndrome_in[7:0];
+        Decode_result = 2'b01; // CE
+     end else if (Error_location_gfexp <= 8'd7) begin
+        Error_location_reg = Error_location_gfexp[3:0];
+        Error_value = Syndrome_in[15:8];
+        Decode_result = 2'b01; // CE
+     end else begin
+        Decode_result = 2'b10; // DUE
      end
    end
   
